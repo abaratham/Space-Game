@@ -195,6 +195,7 @@ public class PlayerShip extends Entity {
 	}
 
 	public void setWeapon(Weapon w) {
+		if (w != null)
 		currentAmmo += w.getAmmo();
 		weapon = w;
 	}

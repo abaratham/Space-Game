@@ -99,7 +99,7 @@ public class Board {
 	public void spawnWeapon() {
 		//TODO: use to weight weapon spawns
 		double prob = Math.random();
-		Weapon wep = new Weapon(1024, 1024, "Shotgun", new Point(1, 9), this, 10, 10);
+		Weapon wep = new Weapon(1024, 1024, "shotgun", new Point(1, 9), this, 50, 10);
 		Tween.to(wep, 0, 4.0f).target(360).repeat(-1, 0f).start(tManager);
 		weaponList.add(wep);
 		
@@ -134,15 +134,22 @@ public class Board {
 		for (int i = 0; i < ship.getBullets().size(); i++) {
 			Bullet b = ship.getBullets().get(i);
 			b.move();
+			if (b.getX() > ship.getX() + 640 || b.getY() > ship.getY() + 360 || b.getX() < ship.getX() - 640 || b.getY() < ship.getY() - 360)
+				ship.getBullets().remove(b);
 		}
 
 		// Move and re-orient the ship
 		ship.move();
 		ship.reOrient();
+		if (ship.getWeapon() == null)
+			System.out.println("null");
+		else
+		System.out.println(ship.getWeapon().getName());
+		
 
 		int limit;
 		if (ship.getWeapon() == null)
-			limit = 7;
+			limit = 4;
 		else limit = ship.getWeapon().getLimiter();
 		// Fire if the mouse is held
 		if (ship.isMouseHeld() && counter == limit)
