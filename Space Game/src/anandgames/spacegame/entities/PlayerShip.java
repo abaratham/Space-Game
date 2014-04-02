@@ -32,7 +32,8 @@ public class PlayerShip extends Entity {
 		fire = Gdx.audio.newSound(Gdx.files
 				.internal("data/Space Game/Sounds/Laser_Shoot.wav"));
 		// Start with infinite ammo
-		currentAmmo = -1;
+		currentAmmo = 0;
+		setMouseHeld(false);
 
 	}
 
@@ -46,28 +47,31 @@ public class PlayerShip extends Entity {
 		}
 		// else fire equipped weapon
 		else {
-			switch (weapon.getName()) {
-			case "shotgun":
-				int limit;
-				if (currentAmmo < 3)
-					limit = currentAmmo;
-				else
-					limit = 3;
-				for (int i = 0; i < limit; i++) {
-					bullets.add(new Bullet(getX() + getRadius(), getY()
-							+ getRadius(), getOrientation()
-							+ ((Math.PI / 12) * (i - 1)), getBoard(), this));
-				}
-				currentAmmo -= limit;
-				break;
-			default:
-				break;
+			//Make sure the ship doesn't fire more ammo than it has
+			int limit;
+			if (currentAmmo < weapon.getAmmoPerShot())
+				limit = currentAmmo;
+			else
+				limit = weapon.getAmmoPerShot();
+			for (int i = 0; i < limit; i++) {
+				bullets.add(new Bullet(getX() + getRadius(), getY()
+						+ getRadius(), getOrientation()
+						+ ((Math.PI / 12) * (i - 1)), getBoard(), this));
 			}
-			if (currentAmmo == 0) {
+			currentAmmo -= limit;
+
+			//If out of ammo set weapon to default
+			if (currentAmmo <= 0) {
 				setWeapon(null);
 			}
 		}
-		fire.play();
+		//Play correct sound
+		Sound sound;
+		if (weapon == null)
+			sound = fire;
+		else
+			sound = weapon.getSound();
+		sound.play();
 	}
 
 	private Board getBoard() {
@@ -196,7 +200,7 @@ public class PlayerShip extends Entity {
 
 	public void setWeapon(Weapon w) {
 		if (w != null)
-		currentAmmo += w.getAmmo();
+			currentAmmo += w.getAmmo();
 		weapon = w;
 	}
 

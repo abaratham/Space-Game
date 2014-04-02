@@ -109,7 +109,7 @@ public class GameOverScreen implements Screen {
 		});
 		
 		LabelStyle labelStyle = new LabelStyle(white, Color.WHITE);
-		heading = new Label("MAIN MENU", labelStyle);
+		heading = new Label("You Died!\nGAME OVER!", labelStyle);
 		heading.setAlignment(Align.center);
 		heading.setFontScale(2f);
 		

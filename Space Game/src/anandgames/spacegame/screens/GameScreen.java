@@ -1,5 +1,6 @@
 package anandgames.spacegame.screens;
 
+import java.awt.Point;
 import java.util.ArrayList;
 
 import anandgames.spacegame.Board;
@@ -161,7 +162,7 @@ public class GameScreen implements Screen {
 	public void drawWeapons() {
 		for (Weapon x : board.getWeaponList()) {
 			spriteBatch.draw(sprites[x.getSpriteKey().x][x.getSpriteKey().y],
-					(float) x.getX(), (float) x.getY(), 4f, 4f, 8f, 8f, .5f,
+					(float) x.getX(), (float) x.getY(), 6f, 6f, 12f, 12f, .5f,
 					.5f, (float)x.getOrientation());
 		}
 	}
@@ -199,7 +200,11 @@ public class GameScreen implements Screen {
 
 	public void drawBullets() {
 		for (int i = 0; i < ship.getBullets().size(); i++) {
-			spriteBatch.draw(sprites[0][2], (float) ship.getBullets().get(i)
+			Point p;
+			if (ship.getWeapon() == null)
+				p = new Point(0, 2);
+			else p = ship.getWeapon().getBulletKey();
+			spriteBatch.draw(sprites[p.x][p.y], (float) ship.getBullets().get(i)
 					.getX(), (float) ship.getBullets().get(i).getY(), 1.5f,
 					1.5f, 3f, 3f, 1f, 1f, 0f);
 		}

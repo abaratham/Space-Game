@@ -1,12 +1,13 @@
 package anandgames.spacegame;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
 import anandgames.spacegame.entities.Bullet;
 import anandgames.spacegame.entities.Enemy;
 import anandgames.spacegame.entities.PlayerShip;
+import anandgames.spacegame.pickups.FlameThrower;
+import anandgames.spacegame.pickups.Shotgun;
 import anandgames.spacegame.pickups.Weapon;
 import anandgames.spacegame.screens.GameScreen;
 import anandgames.spacegame.tweens.ShotgunTweenAccessor;
@@ -32,17 +33,17 @@ public class Board {
 		initEnemies();
 		weaponList = new ArrayList<Weapon>();
 		initTweenManager();
-		//for testing
+		// for testing
 		spawnWeapon();
 	}
-	
-	//Set up the Tween Manager
+
+	// Set up the Tween Manager
 	public void initTweenManager() {
 		tManager = new TweenManager();
 		Tween.registerAccessor(Weapon.class, new ShotgunTweenAccessor());
 	}
 
-	//Initialize enemies
+	// Initialize enemies
 	public void initEnemies() {
 		inGame = true;
 		currentPhase = 0;
@@ -94,23 +95,24 @@ public class Board {
 		ship = new PlayerShip(this);
 		initEnemies();
 	}
-	
-	//Spawn a new random Weapon at a random location
+
+	// Spawn a new random Weapon at a random location
 	public void spawnWeapon() {
-		//TODO: use to weight weapon spawns
+		// TODO: use to weight weapon spawns
 		double prob = Math.random();
-		Weapon wep = new Weapon(1024, 1024, "shotgun", new Point(1, 9), this, 50, 10);
+		Weapon wep = new FlameThrower(this, ship.getX(), ship.getY());
 		Tween.to(wep, 0, 4.0f).target(360).repeat(-1, 0f).start(tManager);
 		weaponList.add(wep);
-		
+
 	}
 
-	// Move and re-orient all entities, spawn a new weapon randomly, check for collisions, and update enemies
+	// Move and re-orient all entities, spawn a new weapon randomly, check for
+	// collisions, and update enemies
 	// if needed
 	public void update() {
 		tManager.update(.032f);
 		double f = Math.random();
-		//TODO: pick the probability of a weapon spawn
+		// TODO: pick the probability of a weapon spawn
 		if (f <= 0)
 			spawnWeapon();
 		if (enemies.size() == 0) {
@@ -134,30 +136,34 @@ public class Board {
 		for (int i = 0; i < ship.getBullets().size(); i++) {
 			Bullet b = ship.getBullets().get(i);
 			b.move();
-			if (b.getX() > ship.getX() + 640 || b.getY() > ship.getY() + 360 || b.getX() < ship.getX() - 640 || b.getY() < ship.getY() - 360)
+			if (b.getX() > ship.getX() + 640 || b.getY() > ship.getY() + 360
+					|| b.getX() < ship.getX() - 640
+					|| b.getY() < ship.getY() - 360)
 				ship.getBullets().remove(b);
 		}
 
 		// Move and re-orient the ship
 		ship.move();
 		ship.reOrient();
-		if (ship.getWeapon() == null)
-			System.out.println("null");
-		else
-		System.out.println(ship.getWeapon().getName());
-		
 
 		int limit;
 		if (ship.getWeapon() == null)
-			limit = 4;
-		else limit = ship.getWeapon().getLimiter();
+			limit = 12;
+		else {
+			limit = ship.getWeapon().getLimiter();
+		}
+		System.out.println(counter);
 		// Fire if the mouse is held
 		if (ship.isMouseHeld() && counter == limit)
 			ship.fire();
+		else if (!ship.isMouseHeld())
+			counter = 0;
 
 		// Create delay for MouseHeld firing
-		if (counter++ == limit)
+		if (counter == limit)
 			counter = 0;
+		else
+			counter++;
 	}
 
 	public PlayerShip getShip() {
@@ -172,23 +178,23 @@ public class Board {
 	// Check for player-enemy and enemy-bullet collisions
 	public void checkCollisions() {
 		ArrayList<Bullet> bullets = ship.getBullets();
-		
-		//Check player-weapon collisions
-		for (Weapon w:weaponList) {
+
+		// Check player-weapon collisions
+		for (Weapon w : weaponList) {
 			int deltaX = (ship.getX() + ship.getRadius())
 					- (w.getX() - w.getRadius());
 			int deltaY = (ship.getY() + ship.getRadius())
 					- (w.getY() - w.getRadius());
 			int shipDist = (int) Math.sqrt(Math.pow(deltaX, 2)
 					+ Math.pow(deltaY, 2));
-			
-			//Ship picked up the weapon		
+
+			// Ship picked up the weapon
 			if (ship.getRadius() + w.getRadius() >= shipDist) {
 				weaponList.remove(w);
 				ship.setWeapon(w);
 				break;
 			}
-			
+
 		}
 
 		for (int i = 0; i < enemies.size(); i++) {
@@ -271,7 +277,7 @@ public class Board {
 	public void setWeaponList(ArrayList<Weapon> weaponList) {
 		this.weaponList = weaponList;
 	}
-	
+
 	public TweenManager getTManager() {
 		return tManager;
 	}
