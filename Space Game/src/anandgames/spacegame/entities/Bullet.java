@@ -6,20 +6,16 @@ import anandgames.spacegame.Board;
 
 public class Bullet extends Entity {
 
-	PlayerShip ship;
 	private Board board;
 
 	public Bullet(int startX, int startY, double orientation,
-			Board board, PlayerShip ship) {
-		super(startX, startY, 7,0, 0, orientation, 1);
-		setCenter(new Point(2,2));
+			Board board) {
+		super(startX, startY, 7,0, 0, orientation, 1, new Point (0,2));
 		setRadius(2);
 		//Bullet is moving as soon as it is fired
 		setDx((int) (Math.cos(orientation) * getSpeed()));
 		setDy((int) (Math.sin(orientation) * getSpeed()));
 		setBoard(board);
-		//Give the bullet access to the ship it was fired from
-		this.ship = ship;
 		
 	}
 

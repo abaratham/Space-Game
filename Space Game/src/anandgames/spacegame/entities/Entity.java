@@ -6,12 +6,12 @@ public class Entity {
 
 	private int x, y, dx, dy, startingHp, hp, radius;
 	private double speed;
-	private Point center;
+	private Point spriteKey;
 	private double orientation;
 	private boolean isVisible = true;
 
 	public Entity(int startX, int startY, double speed, int dx, int dy,
-			double orientation, int hp) {
+			double orientation, int hp, Point key) {
 		x = startX;
 		y = startY;
 		this.setSpeed(speed);
@@ -19,6 +19,7 @@ public class Entity {
 		this.dy = dy;
 		this.orientation = orientation;
 		startingHp = hp;
+		spriteKey = key;
 	}
 
 	public int getX() {
@@ -113,13 +114,13 @@ public class Entity {
 	public void setRadius(int radius) {
 		this.radius = radius;
 	}
-
-	public Point getCenter() {
-		return center;
+	
+	public void setSpriteKey(Point key) {
+		spriteKey = key;
 	}
-
-	public void setCenter(Point center) {
-		this.center = center;
+	
+	public Point getSpriteKey() {
+		return spriteKey;
 	}
 
 }

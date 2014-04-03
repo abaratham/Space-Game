@@ -1,5 +1,7 @@
 package anandgames.spacegame.pong;
 
+import java.awt.Point;
+
 import anandgames.spacegame.entities.Entity;
 
 public class Wall extends Entity {
@@ -8,7 +10,7 @@ public class Wall extends Entity {
 	private Pong pong;
 
 	public Wall(int startX, int startY, double speed, int height, Pong p) {
-		super(startX, startY, speed, 0, 0, 0, 0);
+		super(startX, startY, speed, 0, 0, 0, 0, new Point(0,7));
 		this.height = height;
 		setPong(p);
 	}

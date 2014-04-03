@@ -1,5 +1,7 @@
 package anandgames.spacegame.pong;
 
+import java.awt.Point;
+
 import anandgames.spacegame.entities.Entity;
 
 public class Ball extends Entity {
@@ -8,7 +10,7 @@ public class Ball extends Entity {
 	Pong pong;
 
 	public Ball(int startX, int startY, double speed, int r, Pong p) {
-		super(startX, startY, speed, 3, 0, 0, 0);
+		super(startX, startY, speed, 3, 0, 0, 0, new Point(0, 7));
 		radius = r;
 		pong = p;
 		setDx((int) getSpeed());

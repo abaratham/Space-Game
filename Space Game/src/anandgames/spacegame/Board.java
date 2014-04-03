@@ -6,8 +6,8 @@ import java.util.Random;
 import anandgames.spacegame.entities.Bullet;
 import anandgames.spacegame.entities.Enemy;
 import anandgames.spacegame.entities.PlayerShip;
+import anandgames.spacegame.entities.ShootingEnemy;
 import anandgames.spacegame.pickups.FlameThrower;
-import anandgames.spacegame.pickups.Shotgun;
 import anandgames.spacegame.pickups.Weapon;
 import anandgames.spacegame.screens.GameScreen;
 import anandgames.spacegame.tweens.ShotgunTweenAccessor;
@@ -85,8 +85,16 @@ public class Board {
 	public void newWave() {
 		Random r = new Random();
 		for (int i = 0; i < 5 * currentWave; i++) {
-			enemies.add(new Enemy(r.nextInt(getWidth()),
-					r.nextInt(getHeight()), this));
+			//Start spawning shooting enemies at wave 5
+			if (currentWave >= 5) {
+				double prob = Math.random();
+				if (prob <= .9 * currentWave)
+					enemies.add(new ShootingEnemy(r.nextInt(getWidth()),
+						r.nextInt(getHeight()),this));
+				else
+					enemies.add(new Enemy(r.nextInt(getWidth()),
+						r.nextInt(getHeight()), this));
+			}
 		}
 	}
 
@@ -210,8 +218,13 @@ public class Board {
 					+ Math.pow(deltaY, 2));
 
 			if (ship.getRadius() + e.getRadius() >= shipDist) {
-				ship.setVisible(false);
-				inGame = false;
+				//The ship has a shield around it
+				if (ship.isShielded())
+					ship.setShielded(false);
+				else {
+					ship.setVisible(false);
+					inGame = false;
+				}
 			}
 			// Check bullet-enemy collisions for each bullet
 			for (int j = 0; j < bullets.size(); j++) {

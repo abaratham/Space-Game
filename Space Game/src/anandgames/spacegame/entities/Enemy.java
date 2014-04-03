@@ -10,10 +10,9 @@ public class Enemy extends Entity {
 
 	//Standard "Chaser" enemy
 	public Enemy(int startX, int startY, Board board) {
-		super(startX, startY, 3, 0, 0, 0, 1);
+		super(startX, startY, 3, 0, 0, 0, 1, new Point(0,1));
 		this.setBoard(board);
 		setRadius(5);
-		setCenter(new Point(4,4));
 	}
 
 	//Face the player and move

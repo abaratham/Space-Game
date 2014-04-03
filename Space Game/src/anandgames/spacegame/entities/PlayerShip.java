@@ -15,7 +15,7 @@ public class PlayerShip extends Entity {
 
 	private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 	private boolean upPressed, rightPressed, leftPressed, downPressed,
-			mouseHeld;
+			mouseHeld, shielded;
 	private int score, currentAmmo;
 	private Board board;
 	private Sound fire;
@@ -23,8 +23,7 @@ public class PlayerShip extends Entity {
 
 	public PlayerShip(Board board) {
 		// Always initialized at the center of the board
-		super(1024, 1024, 2, 0, 0, 0, 5);
-		setCenter(new Point(4, 4));
+		super(1024, 1024, 2, 0, 0, 0, 5, null);
 		setRadius(4);
 		setScore(0);
 		this.board = board;
@@ -43,7 +42,7 @@ public class PlayerShip extends Entity {
 		// If weapon is null, use default weapon
 		if (weapon == null) {
 			bullets.add(new Bullet(getX() + 2, getY() + 2, getOrientation(),
-					getBoard(), this));
+					getBoard()));
 		}
 		// else fire equipped weapon
 		else {
@@ -56,7 +55,7 @@ public class PlayerShip extends Entity {
 			for (int i = 0; i < limit; i++) {
 				bullets.add(new Bullet(getX() + getRadius(), getY()
 						+ getRadius(), getOrientation()
-						+ ((Math.PI / 12) * (i - 1)), getBoard(), this));
+						+ ((Math.PI / 12) * (i - 1)), getBoard()));
 			}
 			currentAmmo -= limit;
 
@@ -214,6 +213,14 @@ public class PlayerShip extends Entity {
 	
 	public int getCurrentAmmo() {
 		return currentAmmo;
+	}
+	
+	public boolean isShielded() {
+		return shielded;
+	}
+	
+	public void setShielded(boolean s) {
+		shielded = s;
 	}
 
 }

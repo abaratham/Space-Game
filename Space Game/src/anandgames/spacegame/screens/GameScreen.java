@@ -7,6 +7,7 @@ import anandgames.spacegame.Board;
 import anandgames.spacegame.animations.ExplosionAnimation;
 import anandgames.spacegame.entities.Enemy;
 import anandgames.spacegame.entities.PlayerShip;
+import anandgames.spacegame.entities.ShootingEnemy;
 import anandgames.spacegame.pickups.Weapon;
 
 import com.badlogic.gdx.Game;
@@ -179,8 +180,9 @@ public class GameScreen implements Screen {
 	public void drawInfo() {
 		font.draw(spriteBatch, "Score: " + board.getShip().getScore(),
 				ship.getX() + 100, ship.getY() + 90);
-		font.draw(spriteBatch, "Special Ammo:" + board.getShip().getCurrentAmmo(),
-				ship.getX() + 100, ship.getY() + 85);
+		font.draw(spriteBatch, "Special Ammo:"
+				+ board.getShip().getCurrentAmmo(), ship.getX() + 100,
+				ship.getY() + 85);
 	}
 
 	public void drawShip() {
@@ -189,14 +191,29 @@ public class GameScreen implements Screen {
 		spriteBatch.draw(currentShipFrame, (float) board.getShip().getX(),
 				(float) board.getShip().getY(), 4f, 4f, 8f, 8f, 1, 1,
 				(float) Math.toDegrees(ship.getOrientation()));
+
+		// TODO: draw a shield sprite at 1,12 in Sprites.png
+		if (board.getShip().isShielded())
+			spriteBatch.draw(sprites[1][12], (float) board.getShip().getX(),
+					(float) board.getShip().getY(), 4f, 4f, 8f, 8f, 1, 1,
+					(float) Math.toDegrees(ship.getOrientation()));
 	}
 
 	public void drawEnemies() {
 		for (int i = 0; i < board.getEnemies().size(); i++) {
 			Enemy e = board.getEnemies().get(i);
-			spriteBatch.draw(sprites[0][1], (float) e.getX(), (float) e.getY(),
+			spriteBatch.draw(sprites[e.getSpriteKey().x][e.getSpriteKey().y], (float) e.getX(), (float) e.getY(),
 					4f, 4f, 8f, 8f, 1, 1,
 					(float) Math.toDegrees(e.getOrientation()));
+			if (e instanceof ShootingEnemy) {
+				for (int j = 0; j < ((ShootingEnemy) (e)).getBullets().size(); j++) {
+					spriteBatch.draw(sprites[0][2],
+							(float) ((ShootingEnemy) (e)).getBullets().get(j)
+									.getX(), (float) ((ShootingEnemy) (e))
+									.getBullets().get(j).getY(), 1.5f, 1.5f,
+							3f, 3f, 1f, 1f, 0f);
+				}
+			}
 		}
 	}
 
