@@ -147,7 +147,7 @@ public class GameScreen implements Screen {
 			drawBullets();
 			drawEnemies();
 			drawShip();
-			drawScore();
+			drawInfo();
 			drawExplosions();
 			drawWeapons();
 
@@ -163,7 +163,7 @@ public class GameScreen implements Screen {
 		for (Weapon x : board.getWeaponList()) {
 			spriteBatch.draw(sprites[x.getSpriteKey().x][x.getSpriteKey().y],
 					(float) x.getX(), (float) x.getY(), 6f, 6f, 12f, 12f, .5f,
-					.5f, (float)x.getOrientation());
+					.5f, (float) x.getOrientation());
 		}
 	}
 
@@ -176,9 +176,11 @@ public class GameScreen implements Screen {
 		}
 	}
 
-	public void drawScore() {
+	public void drawInfo() {
 		font.draw(spriteBatch, "Score: " + board.getShip().getScore(),
-				ship.getX() + 100, ship.getY() + 75);
+				ship.getX() + 100, ship.getY() + 90);
+		font.draw(spriteBatch, "Special Ammo:" + board.getShip().getCurrentAmmo(),
+				ship.getX() + 100, ship.getY() + 85);
 	}
 
 	public void drawShip() {
@@ -203,10 +205,11 @@ public class GameScreen implements Screen {
 			Point p;
 			if (ship.getWeapon() == null)
 				p = new Point(0, 2);
-			else p = ship.getWeapon().getBulletKey();
-			spriteBatch.draw(sprites[p.x][p.y], (float) ship.getBullets().get(i)
-					.getX(), (float) ship.getBullets().get(i).getY(), 1.5f,
-					1.5f, 3f, 3f, 1f, 1f, 0f);
+			else
+				p = ship.getWeapon().getBulletKey();
+			spriteBatch.draw(sprites[p.x][p.y], (float) ship.getBullets()
+					.get(i).getX(), (float) ship.getBullets().get(i).getY(),
+					1.5f, 1.5f, 3f, 3f, 1f, 1f, 0f);
 		}
 	}
 

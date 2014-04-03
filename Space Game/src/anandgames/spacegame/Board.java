@@ -84,7 +84,7 @@ public class Board {
 	// Generate a new wave of enemies
 	public void newWave() {
 		Random r = new Random();
-		for (int i = 0; i < 10 + currentWave; i++) {
+		for (int i = 0; i < 5 * currentWave; i++) {
 			enemies.add(new Enemy(r.nextInt(getWidth()),
 					r.nextInt(getHeight()), this));
 		}
@@ -182,7 +182,7 @@ public class Board {
 		// Check player-weapon collisions
 		for (Weapon w : weaponList) {
 			int deltaX = (ship.getX() + ship.getRadius())
-					- (w.getX() - w.getRadius());
+					- (w.getX() + w.getRadius());
 			int deltaY = (ship.getY() + ship.getRadius())
 					- (w.getY() - w.getRadius());
 			int shipDist = (int) Math.sqrt(Math.pow(deltaX, 2)

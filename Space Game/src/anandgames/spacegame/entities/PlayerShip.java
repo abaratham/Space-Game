@@ -207,5 +207,13 @@ public class PlayerShip extends Entity {
 	public Weapon getWeapon() {
 		return weapon;
 	}
+	
+	public void setCurrentAmmo(int ammo) {
+		currentAmmo = ammo;
+	}
+	
+	public int getCurrentAmmo() {
+		return currentAmmo;
+	}
 
 }

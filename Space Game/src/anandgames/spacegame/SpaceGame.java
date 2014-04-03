@@ -5,7 +5,7 @@ import anandgames.spacegame.screens.MainMenu;
 import com.badlogic.gdx.Game;
 
 public class SpaceGame extends Game {
-	public static final String VERSION_NUMBER = "v0.3";
+	public static final String VERSION_NUMBER = "v0.4";
 
 	public void create() {
 		setScreen(new MainMenu());
