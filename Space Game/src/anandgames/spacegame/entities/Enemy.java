@@ -4,13 +4,15 @@ import java.awt.Point;
 
 import anandgames.spacegame.Board;
 
+import com.badlogic.gdx.math.Vector2;
+
 public class Enemy extends Entity {
 
 	private Board board;
 
 	//Standard "Chaser" enemy
-	public Enemy(int startX, int startY, Board board) {
-		super(startX, startY, 3, 0, 0, 0, 1, new Point(0,1));
+	public Enemy(Vector2 startPos, Board board) {
+		super(startPos, 0, 10, new Point(0,1));
 		this.setBoard(board);
 		setRadius(5);
 	}
@@ -18,15 +20,15 @@ public class Enemy extends Entity {
 	//Face the player and move
 	public void move() {
 		setOrientation(getDirectionTowardShip());
-		setDx((int) (Math.cos(getOrientation()) * getSpeed()));
-		setDy((int) (Math.sin(getOrientation()) * getSpeed()));
+		getVelocity().x = (int) (Math.cos(getOrientation()) * getSpeed());
+		getVelocity().y = (int) (Math.sin(getOrientation()) * getSpeed());
 		super.move();
 	}
 
 	//Find direction toward the player
 	public double getDirectionTowardShip() {
 		PlayerShip ship = getBoard().getShip();
-		int dx = getX() - ship.getX(), dy =getY() - ship.getY();
+		float dx = getPosition().x - ship.getPosition().x, dy = getPosition().y - ship.getPosition().y;
 		double angle = Math.atan2(dy, dx);
 			return angle + (Math.PI);
 

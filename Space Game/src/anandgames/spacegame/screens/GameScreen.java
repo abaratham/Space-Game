@@ -22,20 +22,18 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.VertexAttributes;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public class GameScreen implements Screen {
 	private SpriteBatch spriteBatch;
 	private Texture spriteSheet, shipSheet;
-	private Texture spaceMap;
 	private OrthographicCamera cam;
-	private Mesh mesh;
 	private TextureRegion[][] sprites;
 	private TextureRegion[] shipFrames;
 	private Board board;
@@ -48,6 +46,8 @@ public class GameScreen implements Screen {
 	private float stateTime;
 	private Sound fire, explosion;
 	private ArrayList<ExplosionAnimation> explosionAnimations;
+	private TiledMap tiledMap;
+	private OrthogonalTiledMapRenderer mapRenderer;
 
 	public GameScreen() {
 		super();
@@ -70,20 +70,6 @@ public class GameScreen implements Screen {
 		board = new Board(this);
 		ship = board.getShip();
 
-		// Set up background map and camera
-		mesh = new Mesh(true, 4, 6, new VertexAttribute(
-				VertexAttributes.Usage.Position, 3, "attr_Position"),
-				new VertexAttribute(Usage.TextureCoordinates, 2,
-						"attr_texCoords"));
-		spaceMap = new Texture(
-				Gdx.files.internal("data/Space Game/Images/SpaceMap.png"));
-		mesh.setVertices(new float[] { 0f, 0, 0, 0, 1, 2048f, 0, 0, 1, 1,
-				2048f, 2048f, 0, 1, 0, 0, 2048f, 0, 0, 0 });
-		mesh.setIndices(new short[] { 0, 1, 2, 2, 3, 0 });
-		cam = new OrthographicCamera(1280, 720);
-		cam.position.set(board.getWidth() / 2, board.getHeight() / 2, 0);
-		cam.zoom = .25f;
-
 		// Frame count used for update delay
 		frameCount = 0;
 
@@ -91,6 +77,11 @@ public class GameScreen implements Screen {
 		explosionAnimations = new ArrayList<ExplosionAnimation>();
 		explosion = Gdx.audio.newSound(Gdx.files
 				.internal("data/Space Game/Sounds/Explosion.wav"));
+
+		tiledMap = new TmxMapLoader().load("data/Space Game/Other/StarMap.tmx");
+		mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1f);
+		cam = new OrthographicCamera();
+		cam.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
 
 	// Initialize the ship's flame animation
@@ -122,29 +113,16 @@ public class GameScreen implements Screen {
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 			gl.glActiveTexture(GL10.GL_TEXTURE0);
 			gl.glEnable(GL10.GL_TEXTURE_2D);
-			spaceMap.bind();
-			mesh.render(GL10.GL_TRIANGLES);
 			Gdx.input.setInputProcessor(new MyInputProcessor());
 			PlayerShip ship = board.getShip();
 			checkKeys();
-			spriteBatch.begin();
-			// int camx, camy;
-			// if (ship.getX() >= 640 && ship.getX() <= board.getWidth() - 640)
-			// camx = ship.getX();
-			// else if (ship.getX() < 640)
-			// camx = 640;
-			// else
-			// camx = board.getWidth() - 640;
-			// if (ship.getY() >= 360 && ship.getX() <= board.getHeight() - 360)
-			// camy = ship.getY();
-			// else if (ship.getY() < 360)
-			// camy = 360;
-			// else
-			// camy = board.getHeight() - 360;
-			cam.position.set(ship.getX(), ship.getY(), 0);
+			cam.position.set(ship.getPosition().x, ship.getPosition().y, 0);
 			cam.update();
+			mapRenderer.setView(cam);
+			mapRenderer.render();
 			spriteBatch.setProjectionMatrix(cam.combined);
-
+			spriteBatch.begin();
+			
 			drawBullets();
 			drawEnemies();
 			drawShip();
@@ -179,39 +157,44 @@ public class GameScreen implements Screen {
 
 	public void drawInfo() {
 		font.draw(spriteBatch, "Score: " + board.getShip().getScore(),
-				ship.getX() + 100, ship.getY() + 90);
+				ship.getPosition().x + 100, ship.getPosition().y + 90);
 		font.draw(spriteBatch, "Special Ammo:"
-				+ board.getShip().getCurrentAmmo(), ship.getX() + 100,
-				ship.getY() + 85);
+				+ board.getShip().getCurrentAmmo(), ship.getPosition().x + 100,
+				ship.getPosition().y + 85);
 	}
 
 	public void drawShip() {
 		stateTime += Gdx.graphics.getDeltaTime();
 		currentShipFrame = shipAnimation.getKeyFrame(stateTime, true);
-		spriteBatch.draw(currentShipFrame, (float) board.getShip().getX(),
-				(float) board.getShip().getY(), 4f, 4f, 8f, 8f, 1, 1,
-				(float) Math.toDegrees(ship.getOrientation()));
+		spriteBatch
+				.draw(currentShipFrame,
+						(float) board.getShip().getPosition().x, (float) board
+								.getShip().getPosition().y, 8f, 8f, 16f, 16f, 2,
+						2, (float) Math.toDegrees(ship.getOrientation()));
 
 		// TODO: draw a shield sprite at 1,12 in Sprites.png
 		if (board.getShip().isShielded())
-			spriteBatch.draw(sprites[1][12], (float) board.getShip().getX(),
-					(float) board.getShip().getY(), 4f, 4f, 8f, 8f, 1, 1,
-					(float) Math.toDegrees(ship.getOrientation()));
+			spriteBatch.draw(sprites[1][12], (float) board.getShip()
+					.getPosition().x, (float) board.getShip().getPosition().y,
+					4f, 4f, 8f, 8f, 1, 1, (float) Math.toDegrees(ship
+							.getOrientation()));
 	}
 
 	public void drawEnemies() {
 		for (int i = 0; i < board.getEnemies().size(); i++) {
 			Enemy e = board.getEnemies().get(i);
-			spriteBatch.draw(sprites[e.getSpriteKey().x][e.getSpriteKey().y], (float) e.getX(), (float) e.getY(),
-					4f, 4f, 8f, 8f, 1, 1,
+			spriteBatch.draw(sprites[e.getSpriteKey().x][e.getSpriteKey().y],
+					(float) e.getPosition().x, (float) e.getPosition().y, 8f,
+					8f, 16f, 16f, 2, 2,
 					(float) Math.toDegrees(e.getOrientation()));
 			if (e instanceof ShootingEnemy) {
 				for (int j = 0; j < ((ShootingEnemy) (e)).getBullets().size(); j++) {
 					spriteBatch.draw(sprites[0][2],
 							(float) ((ShootingEnemy) (e)).getBullets().get(j)
-									.getX(), (float) ((ShootingEnemy) (e))
-									.getBullets().get(j).getY(), 1.5f, 1.5f,
-							3f, 3f, 1f, 1f, 0f);
+									.getPosition().x,
+							(float) ((ShootingEnemy) (e)).getBullets().get(j)
+									.getPosition().y, 1.5f, 1.5f, 3f, 3f, 1f,
+							1f, 0f);
 				}
 			}
 		}
@@ -225,8 +208,8 @@ public class GameScreen implements Screen {
 			else
 				p = ship.getWeapon().getBulletKey();
 			spriteBatch.draw(sprites[p.x][p.y], (float) ship.getBullets()
-					.get(i).getX(), (float) ship.getBullets().get(i).getY(),
-					1.5f, 1.5f, 3f, 3f, 1f, 1f, 0f);
+					.get(i).getPosition().x, (float) ship.getBullets().get(i)
+					.getPosition().y, 4f, 4f, 8f, 8f, 1f, 1f, 0f);
 		}
 	}
 

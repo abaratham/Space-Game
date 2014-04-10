@@ -14,14 +14,17 @@ import anandgames.spacegame.tweens.ShotgunTweenAccessor;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
+
 public class Board {
 
 	private PlayerShip ship;
 	private ArrayList<Enemy> enemies;
 	private GameScreen game;
-	private int width = 2048;
+	private int width = 8192;
 	private ArrayList<Planet> planets;
-	private int height = 2048;
+	private int height = 8192;
 	private int counter = 0, currentPhase = 0, currentWave = 0;
 	private boolean inGame = true;
 	private ArrayList<Weapon> weaponList;
@@ -34,7 +37,7 @@ public class Board {
 		weaponList = new ArrayList<Weapon>();
 		initTweenManager();
 		// for testing
-		spawnWeapon();
+		// spawnWeapon();
 	}
 
 	// Set up the Tween Manager
@@ -72,9 +75,9 @@ public class Board {
 	public Planet isOnPlanet() {
 		for (int i = 0; i < planets.size(); i++) {
 			Planet p = planets.get(i);
-			int dist = (int) Math
-					.sqrt((Math.pow(ship.getX() - p.getX(), 2) + (Math.pow(
-							ship.getY() - p.getY(), 2))));
+			int dist = (int) Math.sqrt((Math.pow(
+					ship.getPosition().x - p.getX(), 2) + (Math.pow(
+					ship.getPosition().y - p.getY(), 2))));
 			if (dist < ship.getRadius() + p.getRadius())
 				return p;
 		}
@@ -85,15 +88,15 @@ public class Board {
 	public void newWave() {
 		Random r = new Random();
 		for (int i = 0; i < 5 * currentWave; i++) {
-			//Start spawning shooting enemies at wave 5
+			// Start spawning shooting enemies at wave 5
 			if (currentWave >= 5) {
 				double prob = Math.random();
 				if (prob <= .9 * currentWave)
-					enemies.add(new ShootingEnemy(r.nextInt(getWidth()),
-						r.nextInt(getHeight()),this));
+					enemies.add(new ShootingEnemy(new Vector2(r
+							.nextInt(getWidth()), r.nextInt(getHeight())), this));
 				else
-					enemies.add(new Enemy(r.nextInt(getWidth()),
-						r.nextInt(getHeight()), this));
+					enemies.add(new Enemy(new Vector2(r.nextInt(getWidth()), r
+							.nextInt(getHeight())), this));
 			}
 		}
 	}
@@ -108,7 +111,8 @@ public class Board {
 	public void spawnWeapon() {
 		// TODO: use to weight weapon spawns
 		double prob = Math.random();
-		Weapon wep = new FlameThrower(this, ship.getX(), ship.getY());
+		Weapon wep = new FlameThrower(this, ship.getPosition().x,
+				ship.getPosition().y);
 		Tween.to(wep, 0, 4.0f).target(360).repeat(-1, 0f).start(tManager);
 		weaponList.add(wep);
 
@@ -136,7 +140,6 @@ public class Board {
 			Enemy e = enemies.get(i);
 			if (e.isVisible()) {
 				e.move();
-				e.reOrient();
 			}
 		}
 
@@ -144,9 +147,14 @@ public class Board {
 		for (int i = 0; i < ship.getBullets().size(); i++) {
 			Bullet b = ship.getBullets().get(i);
 			b.move();
-			if (b.getX() > ship.getX() + 640 || b.getY() > ship.getY() + 360
-					|| b.getX() < ship.getX() - 640
-					|| b.getY() < ship.getY() - 360)
+			if (b.getPosition().x > ship.getPosition().x
+					+ Gdx.graphics.getWidth() / 2
+					|| b.getPosition().x < ship.getPosition().x
+							- Gdx.graphics.getWidth() / 2
+					|| b.getPosition().y > ship.getPosition().y
+							+ Gdx.graphics.getHeight() / 2
+					|| b.getPosition().y < ship.getPosition().y
+							- Gdx.graphics.getHeight() / 2)
 				ship.getBullets().remove(b);
 		}
 
@@ -189,11 +197,11 @@ public class Board {
 
 		// Check player-weapon collisions
 		for (Weapon w : weaponList) {
-			int deltaX = (ship.getX() + ship.getRadius())
+			float deltaX = (ship.getPosition().x + ship.getRadius())
 					- (w.getX() + w.getRadius());
-			int deltaY = (ship.getY() + ship.getRadius())
+			float deltaY = (ship.getPosition().y + ship.getRadius())
 					- (w.getY() - w.getRadius());
-			int shipDist = (int) Math.sqrt(Math.pow(deltaX, 2)
+			float shipDist = (float) Math.sqrt(Math.pow(deltaX, 2)
 					+ Math.pow(deltaY, 2));
 
 			// Ship picked up the weapon
@@ -208,17 +216,17 @@ public class Board {
 		for (int i = 0; i < enemies.size(); i++) {
 			// Check player-enemy collisions
 			Enemy e = enemies.get(i);
-			int deltaX = (ship.getX() + ship.getRadius())
-					- (e.getX() + e.getRadius());
+			float deltaX = (ship.getPosition().x + ship.getRadius())
+					- (e.getPosition().x + e.getRadius());
 
-			int deltaY = (ship.getY() - ship.getRadius())
-					- (e.getY() - e.getRadius());
+			float deltaY = (ship.getPosition().y - ship.getRadius())
+					- (e.getPosition().y - e.getRadius());
 
-			int shipDist = (int) Math.sqrt(Math.pow(deltaX, 2)
+			float shipDist = (float) Math.sqrt(Math.pow(deltaX, 2)
 					+ Math.pow(deltaY, 2));
 
 			if (ship.getRadius() + e.getRadius() >= shipDist) {
-				//The ship has a shield around it
+				// The ship has a shield around it
 				if (ship.isShielded())
 					ship.setShielded(false);
 				else {
@@ -229,19 +237,20 @@ public class Board {
 			// Check bullet-enemy collisions for each bullet
 			for (int j = 0; j < bullets.size(); j++) {
 				Bullet b = bullets.get(j);
-				int _deltaX = (b.getX() + b.getRadius())
-						- (e.getX() + e.getRadius());
+				float _deltaX = (b.getPosition().x + b.getRadius())
+						- (e.getPosition().x + e.getRadius());
 
-				int _deltaY = (b.getY() - b.getRadius())
-						- (e.getY() - e.getRadius());
+				float _deltaY = (b.getPosition().y - b.getRadius())
+						- (e.getPosition().y - e.getRadius());
 
-				int bDist = (int) Math.sqrt(Math.pow(_deltaX, 2)
+				float bDist = (float) Math.sqrt(Math.pow(_deltaX, 2)
 						+ Math.pow(_deltaY, 2));
 
 				if (b.getRadius() + e.getRadius() >= bDist) {
 					e.setVisible(false);
 					b.setVisible(false);
-					game.addExplosion(e.getX(), e.getY());
+					game.addExplosion((int) e.getPosition().x,
+							(int) e.getPosition().y);
 					game.getSound("Explosion").play(.7f);
 					bullets.remove(j);
 					ship.setScore(ship.getScore() + 10);

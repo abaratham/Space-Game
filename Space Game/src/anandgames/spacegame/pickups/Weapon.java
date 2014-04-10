@@ -9,14 +9,15 @@ import com.badlogic.gdx.audio.Sound;
 
 public class Weapon {
 
-	private int x, y, radius, ammo, limiter, ammoPerShot;
+	private int radius, ammo, limiter, ammoPerShot;
 	private String name;
+	private float x, y;
 	private Point spriteKey, bulletKey;
 	private Board board;
 	private double orientation;
 	private Sound fire;
 
-	public Weapon(Board b, int x, int y, String name, Point spriteKey,
+	public Weapon(Board b, float x, float y, String name, Point spriteKey,
 			Point bulletKey, int ammo, int ammoPerShot, int limiter, String soundPath) {
 		setX(x);
 		setY(y);
@@ -33,19 +34,19 @@ public class Weapon {
 				.internal(soundPath));
 	}
 
-	public int getY() {
+	public float getY() {
 		return y;
 	}
 
-	public void setY(int y) {
+	public void setY(float y) {
 		this.y = y;
 	}
 
-	public int getX() {
+	public float getX() {
 		return x;
 	}
 
-	public void setX(int x) {
+	public void setX(float x) {
 		this.x = x;
 	}
 

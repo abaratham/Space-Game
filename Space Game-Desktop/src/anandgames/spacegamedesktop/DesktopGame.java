@@ -10,7 +10,7 @@ public class DesktopGame {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.width = 1280;
 		cfg.height = 720;
-		cfg.fullscreen = true;
+		cfg.fullscreen = false;
 		cfg.vSyncEnabled = true;
 		new LwjglApplication(new SpaceGame(), cfg);
 	}

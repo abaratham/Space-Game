@@ -1,17 +1,20 @@
 package anandgames.spacegame.entities;
+
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
 import anandgames.spacegame.Board;
 
+import com.badlogic.gdx.math.Vector2;
+
 public class ShootingEnemy extends Enemy {
 
 	private int counter;
 	private ArrayList<Bullet> bullets;
 
-	public ShootingEnemy(int x, int y, Board b) {
-		super(x, y, b);
+	public ShootingEnemy(Vector2 startPos, Board b) {
+		super(startPos, b);
 		bullets = new ArrayList<Bullet>();
 		// TODO: draw a shooting enemy sprite at 1, 13 in Sprites.png
 		setSpriteKey(new Point(1, 13));
@@ -43,10 +46,10 @@ public class ShootingEnemy extends Enemy {
 		Random r = new Random();
 		int angleOffset = r.nextInt(45);
 		int angle = (int) (getDirectionTowardShip() + angleOffset);
-		bullets.add(new Bullet(getX() + getRadius(), getY() + getRadius(),
-				angle, getBoard()));
+		bullets.add(new Bullet(new Vector2(getPosition().x + getRadius(),
+				getPosition().y + getRadius()), angle, getBoard()));
 	}
-	
+
 	public ArrayList<Bullet> getBullets() {
 		return bullets;
 	}

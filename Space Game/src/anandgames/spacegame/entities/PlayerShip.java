@@ -10,6 +10,7 @@ import anandgames.spacegame.pickups.Weapon;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.math.Vector2;
 
 public class PlayerShip extends Entity {
 
@@ -23,11 +24,11 @@ public class PlayerShip extends Entity {
 
 	public PlayerShip(Board board) {
 		// Always initialized at the center of the board
-		super(1024, 1024, 2, 0, 0, 0, 5, null);
+		super(new Vector2(board.getWidth()/2, board.getHeight()/2), 0.0, 10, new Point());
 		setRadius(4);
 		setScore(0);
 		this.board = board;
-		// Initialize fire sound byte
+		// Initialize default fire sound byte
 		fire = Gdx.audio.newSound(Gdx.files
 				.internal("data/Space Game/Sounds/Laser_Shoot.wav"));
 		// Start with infinite ammo
@@ -40,8 +41,8 @@ public class PlayerShip extends Entity {
 	public void fire() {
 		// Fire current weapon and subtract from ammo
 		// If weapon is null, use default weapon
-		if (weapon == null) {
-			bullets.add(new Bullet(getX() + 2, getY() + 2, getOrientation(),
+		if (weapon == null || weapon.getAmmoPerShot() == 1) {
+			bullets.add(new Bullet(new Vector2(getPosition().x + 2, getPosition().y + 2), getOrientation(),
 					getBoard()));
 		}
 		// else fire equipped weapon
@@ -53,8 +54,8 @@ public class PlayerShip extends Entity {
 			else
 				limit = weapon.getAmmoPerShot();
 			for (int i = 0; i < limit; i++) {
-				bullets.add(new Bullet(getX() + getRadius(), getY()
-						+ getRadius(), getOrientation()
+				bullets.add(new Bullet(new Vector2(getPosition().x + getRadius(), getPosition().y
+						+ getRadius()), getOrientation()
 						+ ((Math.PI / 12) * (i - 1)), getBoard()));
 			}
 			currentAmmo -= limit;
@@ -86,14 +87,14 @@ public class PlayerShip extends Entity {
 	// Move the ship and limit movement to within the bounds of the board
 	public void move() {
 		super.move();
-		if (getX() > board.getWidth())
-			setX(board.getWidth());
-		if (getX() < 0)
-			setX(0);
-		if (getY() > board.getHeight())
-			setY(board.getHeight());
-		if (getY() < 0)
-			setY(0);
+		if (getPosition().x > board.getWidth())
+			getPosition().x = board.getWidth();
+		if (getPosition().x < 0)
+			getPosition().x = 0;
+		if (getPosition().y > board.getHeight())
+			getPosition().y = board.getHeight();
+		if (getPosition().y < 0)
+			getPosition().y = 0;
 	}
 
 	public void mouseReleased() {
@@ -104,22 +105,22 @@ public class PlayerShip extends Entity {
 	public void keyPressed(char key) {
 
 		if (key == 'a') {
-			setDx((int) -getSpeed());
+			getVelocity().x = -getSpeed();
 			leftPressed = true;
 		}
 
 		if (key == 'd') {
-			setDx((int) getSpeed());
+			getVelocity().x = getSpeed();
 			rightPressed = true;
 		}
 
 		if (key == 'w') {
-			setDy((int) getSpeed());
+			getVelocity().y = getSpeed();
 			upPressed = true;
 		}
 
 		if (key == 's') {
-			setDy((int) -getSpeed());
+			getVelocity().y = -getSpeed();
 			downPressed = true;
 		}
 
@@ -129,38 +130,38 @@ public class PlayerShip extends Entity {
 
 		if (key == 'a') {
 			if (!rightPressed) {
-				setDx(0);
+				getVelocity().x = 0;
 			}
 			if (rightPressed)
-				setDx((int) getSpeed());
+				getVelocity().x = getSpeed();
 			leftPressed = false;
 		}
 
 		if (key == 'd') {
 			if (!leftPressed) {
-				setDx(0);
+				getVelocity().x = 0;
 			}
 			if (leftPressed) {
-				setDx((int) -getSpeed());
+				getVelocity().x = -getSpeed();
 			}
 			rightPressed = false;
 		}
 
 		if (key == 'w') {
 			if (!downPressed) {
-				setDy(0);
+				getVelocity().y = 0;
 			}
 			if (downPressed)
-				setDy((int) -getSpeed());
+				getVelocity().y = -getSpeed();
 			upPressed = false;
 		}
 
 		if (key == 's') {
 			if (!upPressed) {
-				setDy(0);
+				getVelocity().y = 0;
 			}
 			if (upPressed)
-				setDy((int) getSpeed());
+				getVelocity().y = getSpeed();
 			downPressed = false;
 		}
 

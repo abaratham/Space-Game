@@ -2,58 +2,49 @@ package anandgames.spacegame.entities;
 
 import java.awt.Point;
 
+import com.badlogic.gdx.math.Vector2;
+
 public class Entity {
 
-	private int x, y, dx, dy, startingHp, hp, radius;
-	private double speed;
+	private int radius, speed;
 	private Point spriteKey;
 	private double orientation;
-	private boolean isVisible = true;
+	private boolean isVisible;
+	private Vector2 position, velocity;
 
-	public Entity(int startX, int startY, double speed, int dx, int dy,
-			double orientation, int hp, Point key) {
-		x = startX;
-		y = startY;
-		this.setSpeed(speed);
-		this.dx = dx;
-		this.dy = dy;
-		this.orientation = orientation;
-		startingHp = hp;
-		spriteKey = key;
+	public Entity(Vector2 startPos,	double orientation, int speed, Point key) {
+		velocity = new Vector2(0,0);
+		setPosition(startPos);
+		setOrientation(orientation);
+		setSpriteKey(key);
+		setVisible(true);
+		setSpeed(speed);
+	}
+	
+	public int getSpeed() {
+		return speed;
+	}
+	
+	public void setSpeed(int s) {
+		speed = s;
+	}
+	
+	public Vector2 getPosition() {
+		return position;
+	}
+	
+	public void setPosition(Vector2 pos) {
+		position = pos;
 	}
 
-	public int getX() {
-		return x;
+	public Vector2 getVelocity() {
+		return velocity;
 	}
-
-	public void setX(int x) {
-		this.x = x;
+	
+	public void setVelocity(Vector2 vel) {
+		velocity = vel;
 	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY(int y) {
-		this.y = y;
-	}
-
-	public int getDx() {
-		return dx;
-	}
-
-	public void setDx(int dx) {
-		this.dx = dx;
-	}
-
-	public int getDy() {
-		return dy;
-	}
-
-	public void setDy(int dy) {
-		this.dy = dy;
-	}
-
+	
 	public double getOrientation() {
 		return orientation;
 	}
@@ -62,41 +53,8 @@ public class Entity {
 		this.orientation = orientation;
 	}
 
-	public int getStartingHp() {
-		return startingHp;
-	}
-
-	public void setStartingHp(int startingHp) {
-		this.startingHp = startingHp;
-	}
-
-	public int getHp() {
-		return hp;
-	}
-
-	public void setHp(int hp) {
-		this.hp = hp;
-	}
-
 	public void move() {
-		x += dx;
-		y += dy;
-	}
-
-	public void rotate(int angle) {
-		orientation += angle;
-	}
-
-	public void reOrient() {
-
-	}
-
-	public double getSpeed() {
-		return speed;
-	}
-
-	public void setSpeed(double speed) {
-		this.speed = speed;
+		position.add(velocity);
 	}
 
 	public boolean isVisible() {
