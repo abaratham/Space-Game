@@ -156,11 +156,11 @@ public class GameScreen implements Screen {
 	}
 
 	public void drawInfo() {
-		font.draw(spriteBatch, "Score: " + board.getShip().getScore(),
-				ship.getPosition().x + 100, ship.getPosition().y + 90);
-		font.draw(spriteBatch, "Special Ammo:"
-				+ board.getShip().getCurrentAmmo(), ship.getPosition().x + 100,
-				ship.getPosition().y + 85);
+//		font.draw(spriteBatch, "Score: " + board.getShip().getScore(),
+//				ship.getPosition().x + 100, ship.getPosition().y + 90);
+//		font.draw(spriteBatch, "Special Ammo:"
+//				+ board.getShip().getCurrentAmmo(), ship.getPosition().x + 100,
+//				ship.getPosition().y + 85);
 	}
 
 	public void drawShip() {
@@ -169,7 +169,7 @@ public class GameScreen implements Screen {
 		spriteBatch
 				.draw(currentShipFrame,
 						(float) board.getShip().getPosition().x, (float) board
-								.getShip().getPosition().y, 8f, 8f, 16f, 16f, 2,
+								.getShip().getPosition().y, 10f, 10f, 20f, 20f, 2,
 						2, (float) Math.toDegrees(ship.getOrientation()));
 
 		// TODO: draw a shield sprite at 1,12 in Sprites.png
@@ -184,8 +184,8 @@ public class GameScreen implements Screen {
 		for (int i = 0; i < board.getEnemies().size(); i++) {
 			Enemy e = board.getEnemies().get(i);
 			spriteBatch.draw(sprites[e.getSpriteKey().x][e.getSpriteKey().y],
-					(float) e.getPosition().x, (float) e.getPosition().y, 8f,
-					8f, 16f, 16f, 2, 2,
+					(float) e.getPosition().x, (float) e.getPosition().y, 10f,
+					10f, 20f, 20f, 2, 2,
 					(float) Math.toDegrees(e.getOrientation()));
 			if (e instanceof ShootingEnemy) {
 				for (int j = 0; j < ((ShootingEnemy) (e)).getBullets().size(); j++) {
@@ -209,7 +209,7 @@ public class GameScreen implements Screen {
 				p = ship.getWeapon().getBulletKey();
 			spriteBatch.draw(sprites[p.x][p.y], (float) ship.getBullets()
 					.get(i).getPosition().x, (float) ship.getBullets().get(i)
-					.getPosition().y, 4f, 4f, 8f, 8f, 1f, 1f, 0f);
+					.getPosition().y, 7f, 7f, 14f, 14f, 1f, 1f, 0f);
 		}
 	}
 

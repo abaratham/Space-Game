@@ -14,7 +14,7 @@ public class Bullet extends Entity {
 	public Bullet(Vector2 startPos, double orientation,
 			Board board) {
 		super(startPos, orientation, 25, new Point (0,2));
-		setRadius(2);
+		setRadius(7);
 		//Bullet is moving as soon as it is fired
 		getVelocity().x = (float) (Math.cos(orientation) * getSpeed());
 		getVelocity().y = (float) (Math.sin(orientation) * getSpeed());

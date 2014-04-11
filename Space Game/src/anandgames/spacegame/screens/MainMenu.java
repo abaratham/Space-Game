@@ -58,14 +58,18 @@ public class MainMenu implements Screen {
 		atlas = new TextureAtlas("data/Space Game/ui/Button.pack");
 		Gdx.input.setInputProcessor(stage);
 		skin = new Skin(atlas);
+		
 		table = new Table(skin);
 		table.setFillParent(true);
+		
 		white = new BitmapFont(
 				Gdx.files.internal("data/Space Game/Fonts/White.fnt"), false);
 		LabelStyle labelStyle = new LabelStyle(white, Color.WHITE);
-		heading = new Label("MAIN MENU", labelStyle);
+		
+		heading = new Label("GRAVITY", labelStyle);
 		heading.setAlignment(Align.center);
 		heading.setFontScale(2f);
+		
 		black = new BitmapFont(
 				Gdx.files.internal("data/Space Game/Fonts/Black.fnt"), false);
 		TextButtonStyle textButtonStyle = new TextButtonStyle();

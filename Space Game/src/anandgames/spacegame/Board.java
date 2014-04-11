@@ -91,7 +91,7 @@ public class Board {
 			// Start spawning shooting enemies at wave 5
 			if (currentWave >= 5) {
 				double prob = Math.random();
-				if (prob <= .9 * currentWave)
+				if (prob >= .9 * currentWave)
 					enemies.add(new ShootingEnemy(new Vector2(r
 							.nextInt(getWidth()), r.nextInt(getHeight())), this));
 				else

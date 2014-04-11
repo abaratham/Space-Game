@@ -14,7 +14,7 @@ public class Enemy extends Entity {
 	public Enemy(Vector2 startPos, Board board) {
 		super(startPos, 0, 10, new Point(0,1));
 		this.setBoard(board);
-		setRadius(5);
+		setRadius(20);
 	}
 
 	//Face the player and move

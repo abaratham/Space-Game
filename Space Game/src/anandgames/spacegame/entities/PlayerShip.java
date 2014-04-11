@@ -25,7 +25,7 @@ public class PlayerShip extends Entity {
 	public PlayerShip(Board board) {
 		// Always initialized at the center of the board
 		super(new Vector2(board.getWidth()/2, board.getHeight()/2), 0.0, 10, new Point());
-		setRadius(4);
+		setRadius(20);
 		setScore(0);
 		this.board = board;
 		// Initialize default fire sound byte
