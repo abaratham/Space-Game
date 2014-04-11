@@ -24,7 +24,7 @@ public class PlayerShip extends Entity {
 
 	public PlayerShip(Board board) {
 		// Always initialized at the center of the board
-		super(new Vector2(board.getWidth()/2, board.getHeight()/2), 0.0, 10, new Point());
+		super(new Vector2(board.getWidth()/2, board.getHeight()/2), 0, 11,1.5f, new Point());
 		setRadius(20);
 		setScore(0);
 		this.board = board;
@@ -86,6 +86,8 @@ public class PlayerShip extends Entity {
 
 	// Move the ship and limit movement to within the bounds of the board
 	public void move() {
+		System.out.println(getVelocity());
+		System.out.println(getAcceleration());
 		super.move();
 		if (getPosition().x > board.getWidth())
 			getPosition().x = board.getWidth();
@@ -105,22 +107,22 @@ public class PlayerShip extends Entity {
 	public void keyPressed(char key) {
 
 		if (key == 'a') {
-			getVelocity().x = -getSpeed();
+			getAcceleration().x = -getMaxAcceleration();
 			leftPressed = true;
 		}
 
 		if (key == 'd') {
-			getVelocity().x = getSpeed();
+			getAcceleration().x = getMaxAcceleration();
 			rightPressed = true;
 		}
 
 		if (key == 'w') {
-			getVelocity().y = getSpeed();
+			getAcceleration().y = getMaxAcceleration();
 			upPressed = true;
 		}
 
 		if (key == 's') {
-			getVelocity().y = -getSpeed();
+			getAcceleration().y = -getMaxAcceleration();
 			downPressed = true;
 		}
 
@@ -130,38 +132,38 @@ public class PlayerShip extends Entity {
 
 		if (key == 'a') {
 			if (!rightPressed) {
-				getVelocity().x = 0;
+				getAcceleration().x = 0;
 			}
 			if (rightPressed)
-				getVelocity().x = getSpeed();
+				getAcceleration().x = getMaxAcceleration();
 			leftPressed = false;
 		}
 
 		if (key == 'd') {
 			if (!leftPressed) {
-				getVelocity().x = 0;
+				getAcceleration().x = 0;
 			}
 			if (leftPressed) {
-				getVelocity().x = -getSpeed();
+				getAcceleration().x = -getMaxAcceleration();
 			}
 			rightPressed = false;
 		}
 
 		if (key == 'w') {
 			if (!downPressed) {
-				getVelocity().y = 0;
+				getAcceleration().y = 0;
 			}
 			if (downPressed)
-				getVelocity().y = -getSpeed();
+				getAcceleration().y = -getMaxAcceleration();
 			upPressed = false;
 		}
 
 		if (key == 's') {
 			if (!upPressed) {
-				getVelocity().y = 0;
+				getAcceleration().y = 0;
 			}
 			if (upPressed)
-				getVelocity().y = getSpeed();
+				getAcceleration().y = getMaxAcceleration();
 			downPressed = false;
 		}
 

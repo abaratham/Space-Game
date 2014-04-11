@@ -12,7 +12,7 @@ public class Enemy extends Entity {
 
 	//Standard "Chaser" enemy
 	public Enemy(Vector2 startPos, Board board) {
-		super(startPos, 0, 10, new Point(0,1));
+		super(startPos, 0, 10, .75f, new Point(0,1));
 		this.setBoard(board);
 		setRadius(20);
 	}
@@ -20,8 +20,8 @@ public class Enemy extends Entity {
 	//Face the player and move
 	public void move() {
 		setOrientation(getDirectionTowardShip());
-		getVelocity().x = (int) (Math.cos(getOrientation()) * getSpeed());
-		getVelocity().y = (int) (Math.sin(getOrientation()) * getSpeed());
+		getAcceleration().x = ((float)Math.cos(getOrientation()) * getMaxAcceleration());
+		getAcceleration().y = ((float)Math.sin(getOrientation()) * getMaxAcceleration());
 		super.move();
 	}
 
