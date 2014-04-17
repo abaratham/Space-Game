@@ -8,6 +8,7 @@ import anandgames.spacegame.entities.Enemy;
 import anandgames.spacegame.entities.PlayerShip;
 import anandgames.spacegame.entities.ShootingEnemy;
 import anandgames.spacegame.pickups.FlameThrower;
+import anandgames.spacegame.pickups.Shotgun;
 import anandgames.spacegame.pickups.Weapon;
 import anandgames.spacegame.screens.GameScreen;
 import anandgames.spacegame.tweens.ShotgunTweenAccessor;
@@ -60,15 +61,16 @@ public class Board {
 	public void initPlanets() {
 		planets = new ArrayList<Planet>();
 		// Frogger
-		planets.add(new Planet(2048 - 189, 2048 - 189, 60, null));
+		planets.add(new Planet(768, 8192 - 2624, 224, null));
 		// Phoenix
-		planets.add(new Planet(2048 - 1269, 2048 - 765, 25, null));
+		planets.add(new Planet(6976, 8192 - 896, 96, null));
 		// Space Invaders
-		planets.add(new Planet(2048 - 1630, 2048 - 181, 25, null));
+		planets.add(new Planet(2560, 8192 - 6080, 160, null));
 		// Pong
-		planets.add(new Planet(2048 - 906, 2048 - 1285, 25, null));
+		planets.add(new Planet(3776, 8192 - 2816, 160, null));
 		// Tetris
-		planets.add(new Planet(2048 - 541, 2048 - 1603, 50, null));
+		planets.add(new Planet(3776, 8192 - 4880, 128, null));
+		planets.add(new Planet(6976, 8192 - 6080, 256, null));
 	}
 
 	// Check if the ship is over a planet
@@ -109,10 +111,21 @@ public class Board {
 
 	// Spawn a new random Weapon at a random location
 	public void spawnWeapon() {
+		Weapon wep;
+		float maxX = ship.getPosition().x + (Gdx.graphics.getWidth() / 2), minX = ship
+				.getPosition().x - (Gdx.graphics.getWidth() / 2), maxY = ship
+				.getPosition().y + (Gdx.graphics.getHeight() / 2), minY = ship
+				.getPosition().y - (Gdx.graphics.getHeight() / 2);
 		// TODO: use to weight weapon spawns
 		double prob = Math.random();
-		Weapon wep = new FlameThrower(this, ship.getPosition().x,
-				ship.getPosition().y);
+		if (prob < .5)
+			wep = new FlameThrower(this,
+					(float) (Math.random() * (maxX - minX) + minX),
+					(float) (Math.random() * (maxY - minY) + minY));
+		else
+			wep = new Shotgun(this,
+					(float) (Math.random() * (maxX - minX) + minX),
+					(float) (Math.random() * (maxY - minY) + minY));
 		Tween.to(wep, 0, 4.0f).target(360).repeat(-1, 0f).start(tManager);
 		weaponList.add(wep);
 
@@ -125,7 +138,7 @@ public class Board {
 		tManager.update(.032f);
 		double f = Math.random();
 		// TODO: pick the probability of a weapon spawn
-		if (f <= 0)
+		if (f <= 0.005)
 			spawnWeapon();
 		if (enemies.size() == 0) {
 			currentWave++;
@@ -168,7 +181,6 @@ public class Board {
 		else {
 			limit = ship.getWeapon().getLimiter();
 		}
-		System.out.println(counter);
 		// Fire if the mouse is held
 		if (ship.isMouseHeld() && counter == limit)
 			ship.fire();

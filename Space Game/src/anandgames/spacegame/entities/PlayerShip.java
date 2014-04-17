@@ -24,7 +24,8 @@ public class PlayerShip extends Entity {
 
 	public PlayerShip(Board board) {
 		// Always initialized at the center of the board
-		super(new Vector2(board.getWidth()/2, board.getHeight()/2), 0, 11,1.5f, new Point());
+		super(new Vector2(board.getWidth() / 2, board.getHeight() / 2), 0, 11,
+				1.5f, new Point());
 		setRadius(20);
 		setScore(0);
 		this.board = board;
@@ -42,30 +43,31 @@ public class PlayerShip extends Entity {
 		// Fire current weapon and subtract from ammo
 		// If weapon is null, use default weapon
 		if (weapon == null || weapon.getAmmoPerShot() == 1) {
-			bullets.add(new Bullet(new Vector2(getPosition().x + 2, getPosition().y + 2), getOrientation(),
-					getBoard()));
+			bullets.add(new Bullet(new Vector2(getPosition().x + 2,
+					getPosition().y + 2), getOrientation(), getBoard()));
 		}
 		// else fire equipped weapon
 		else {
-			//Make sure the ship doesn't fire more ammo than it has
+			// Make sure the ship doesn't fire more ammo than it has
 			int limit;
 			if (currentAmmo < weapon.getAmmoPerShot())
 				limit = currentAmmo;
 			else
 				limit = weapon.getAmmoPerShot();
 			for (int i = 0; i < limit; i++) {
-				bullets.add(new Bullet(new Vector2(getPosition().x + getRadius(), getPosition().y
-						+ getRadius()), getOrientation()
-						+ ((Math.PI / 12) * (i - 1)), getBoard()));
+				bullets.add(new Bullet(new Vector2(getPosition().x
+						+ getRadius(), getPosition().y + getRadius()),
+						getOrientation() + ((Math.PI / 12) * (i - 1)),
+						getBoard()));
 			}
 			currentAmmo -= limit;
 
-			//If out of ammo set weapon to default
+			// If out of ammo set weapon to default
 			if (currentAmmo <= 0) {
 				setWeapon(null);
 			}
 		}
-		//Play correct sound
+		// Play correct sound
 		Sound sound;
 		if (weapon == null)
 			sound = fire;
@@ -86,8 +88,6 @@ public class PlayerShip extends Entity {
 
 	// Move the ship and limit movement to within the bounds of the board
 	public void move() {
-		System.out.println(getVelocity());
-		System.out.println(getAcceleration());
 		super.move();
 		if (getPosition().x > board.getWidth())
 			getPosition().x = board.getWidth();
@@ -176,7 +176,9 @@ public class PlayerShip extends Entity {
 	// Orient the ship to face the mouse
 	public void reOrient() {
 		Point m = MouseInfo.getPointerInfo().getLocation();
-		float angle = (float) (Math.atan2(720 - m.y - 360, m.x - 640));
+		float angle = (float) (Math.atan2(Gdx.graphics.getHeight() - m.y
+				- (Gdx.graphics.getHeight() / 2),
+				m.x - (Gdx.graphics.getWidth() / 2)));
 		setOrientation(angle);
 	}
 
@@ -209,19 +211,19 @@ public class PlayerShip extends Entity {
 	public Weapon getWeapon() {
 		return weapon;
 	}
-	
+
 	public void setCurrentAmmo(int ammo) {
 		currentAmmo = ammo;
 	}
-	
+
 	public int getCurrentAmmo() {
 		return currentAmmo;
 	}
-	
+
 	public boolean isShielded() {
 		return shielded;
 	}
-	
+
 	public void setShielded(boolean s) {
 		shielded = s;
 	}

@@ -141,8 +141,8 @@ public class GameScreen implements Screen {
 	public void drawWeapons() {
 		for (Weapon x : board.getWeaponList()) {
 			spriteBatch.draw(sprites[x.getSpriteKey().x][x.getSpriteKey().y],
-					(float) x.getX(), (float) x.getY(), 6f, 6f, 12f, 12f, .5f,
-					.5f, (float) x.getOrientation());
+					(float) x.getX(), (float) x.getY(), 16f, 16f, 32f, 32f, 1f,
+					1f, (float) x.getOrientation());
 		}
 	}
 

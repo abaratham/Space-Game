@@ -25,7 +25,7 @@ public class Weapon {
 		setSpriteKey(spriteKey);
 		setBoard(b);
 		setOrientation(0);
-		setRadius(6);
+		setRadius(16);
 		setAmmo(ammo);
 		setLimiter(limiter);
 		setBulletKey(bulletKey);
