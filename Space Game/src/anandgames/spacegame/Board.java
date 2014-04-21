@@ -37,6 +37,7 @@ public class Board {
 		initEnemies();
 		weaponList = new ArrayList<Weapon>();
 		initTweenManager();
+		initPlanets();
 		// for testing
 		// spawnWeapon();
 	}
@@ -60,30 +61,28 @@ public class Board {
 	// Add Planets to the Board
 	public void initPlanets() {
 		planets = new ArrayList<Planet>();
-		// Frogger
-		planets.add(new Planet(768, 8192 - 2624, 224, null));
-		// Phoenix
-		planets.add(new Planet(6976, 8192 - 896, 96, null));
-		// Space Invaders
-		planets.add(new Planet(2560, 8192 - 6080, 160, null));
-		// Pong
-		planets.add(new Planet(3776, 8192 - 2816, 160, null));
-		// Tetris
-		planets.add(new Planet(3776, 8192 - 4880, 128, null));
-		planets.add(new Planet(6976, 8192 - 6080, 256, null));
+		planets.add(new Planet("Moon", 768, 8192 - 2624, 224, 6));
+		planets.add(new Planet("Mars", 6976, 8192 - 896, 96, 2));
+		planets.add(new Planet("Marsh", 2560, 8192 - 6080, 160, 3));
+		planets.add(new Planet("Jungle", 3776, 8192 - 2816, 160, 4));
+		planets.add(new Planet("Base", 3776, 8192 - 4880, 128, 2));
+		planets.add(new Planet("Earth", 6976, 8192 - 6080, 256, 7));
 	}
 
 	// Check if the ship is over a planet
-	public Planet isOnPlanet() {
+	public boolean isOnPlanet() {
 		for (int i = 0; i < planets.size(); i++) {
 			Planet p = planets.get(i);
-			int dist = (int) Math.sqrt((Math.pow(
-					ship.getPosition().x - p.getX(), 2) + (Math.pow(
-					ship.getPosition().y - p.getY(), 2))));
+			int dist = (int) Math
+					.sqrt((Math.pow(
+							ship.getPosition().x + ship.getRadius() - p.getX(),
+							2) + (Math.pow(
+							ship.getPosition().y + ship.getRadius() - p.getY(),
+							2))));
 			if (dist < ship.getRadius() + p.getRadius())
-				return p;
+				return true;
 		}
-		return null;
+		return false;
 	}
 
 	// Generate a new wave of enemies
@@ -146,7 +145,12 @@ public class Board {
 			ship.getBullets().clear();
 
 		}
-		checkCollisions();
+
+		// Check collisions between all entities
+//		 checkCollisions();
+
+		// Check if entities are affected by any planets
+		checkPlanetEffects();
 
 		// Move and re-orient all enemies
 		for (int i = 0; i < enemies.size(); i++) {
@@ -274,6 +278,31 @@ public class Board {
 			}
 		}
 
+	}
+
+	// Check if entities are within the range of planets
+	//TODO: figure out why the ship revolves in a square...
+	public void checkPlanetEffects() {
+		Vector2 ship = this.ship.getPosition();
+		for (Planet x : planets) {
+			Vector2 planet = new Vector2(x.getX(), x.getY());
+
+			float deltaX = (ship.x + this.ship.getRadius()) - (planet.x);
+			float deltaY = (ship.y + this.ship.getRadius()) - (planet.y);
+			float dist = (float) Math.sqrt(Math.pow(deltaX, 2)
+					+ Math.pow(deltaY, 2));
+
+			// The ship is within range of the planet
+			if (dist <= x.getRange()) {
+				float temp = (dist / x.getRadius());
+				float effect = x.getMaxEffect() - temp;
+				double angle = Math.atan2(deltaY, deltaX);
+				double effectX = (Math.cos(angle) * effect);
+				double effectY = (Math.sin(angle) * effect);
+				this.ship.getAcceleration().x -= effectX;
+				this.ship.getAcceleration().y -= effectY;
+			}
+		}
 	}
 
 	public boolean isInGame() {

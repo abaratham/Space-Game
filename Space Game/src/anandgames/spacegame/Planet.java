@@ -1,19 +1,18 @@
 package anandgames.spacegame;
 
-import com.badlogic.gdx.Screen;
 
 public class Planet {
 
-	private int x, y, radius;
-	private Screen screen;
+	private int x, y, radius, range, maxEffect;
+	private String name;
 	
-	
-	//Create a Planet with a screen to be launched upon entry
-	public Planet(int x, int y, int radius, Screen screen) {
+	public Planet(String name, int x, int y, int radius, int effect) {
 		setX(x);
 		setY(y);
 		setRadius(radius);
-		setScreen(screen);
+		setRange(radius * 2);
+		setMaxEffect(effect);
+		setName(name);
 	}
 
 	public int getRadius() {
@@ -40,12 +39,28 @@ public class Planet {
 		this.x = x;
 	}
 
-	public Screen getScreen() {
-		return screen;
+	public int getRange() {
+		return range;
 	}
 
-	public void setScreen(Screen screen) {
-		this.screen = screen;
+	public void setRange(int range) {
+		this.range = range;
+	}
+
+	public int getMaxEffect() {
+		return maxEffect;
+	}
+
+	public void setMaxEffect(int maxEffect) {
+		this.maxEffect = maxEffect;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

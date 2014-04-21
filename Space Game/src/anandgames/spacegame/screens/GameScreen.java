@@ -122,9 +122,10 @@ public class GameScreen implements Screen {
 			mapRenderer.render();
 			spriteBatch.setProjectionMatrix(cam.combined);
 			spriteBatch.begin();
-			
+
 			drawBullets();
 			drawEnemies();
+//			if (board.isOnPlanet())
 			drawShip();
 			drawInfo();
 			drawExplosions();
@@ -156,21 +157,20 @@ public class GameScreen implements Screen {
 	}
 
 	public void drawInfo() {
-//		font.draw(spriteBatch, "Score: " + board.getShip().getScore(),
-//				ship.getPosition().x + 100, ship.getPosition().y + 90);
-//		font.draw(spriteBatch, "Special Ammo:"
-//				+ board.getShip().getCurrentAmmo(), ship.getPosition().x + 100,
-//				ship.getPosition().y + 85);
+		// font.draw(spriteBatch, "Score: " + board.getShip().getScore(),
+		// ship.getPosition().x + 100, ship.getPosition().y + 90);
+		// font.draw(spriteBatch, "Special Ammo:"
+		// + board.getShip().getCurrentAmmo(), ship.getPosition().x + 100,
+		// ship.getPosition().y + 85);
 	}
 
 	public void drawShip() {
 		stateTime += Gdx.graphics.getDeltaTime();
 		currentShipFrame = shipAnimation.getKeyFrame(stateTime, true);
-		spriteBatch
-				.draw(currentShipFrame,
-						(float) board.getShip().getPosition().x, (float) board
-								.getShip().getPosition().y, 10f, 10f, 20f, 20f, 2,
-						2, (float) Math.toDegrees(ship.getOrientation()));
+		spriteBatch.draw(currentShipFrame, (float) board.getShip()
+				.getPosition().x, (float) board.getShip().getPosition().y, 10f,
+				10f, 20f, 20f, 2, 2, (float) Math.toDegrees(ship
+						.getOrientation()));
 
 		// TODO: draw a shield sprite at 1,12 in Sprites.png
 		if (board.getShip().isShielded())
@@ -218,11 +218,6 @@ public class GameScreen implements Screen {
 		if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
 			((Game) Gdx.app.getApplicationListener())
 					.setScreen(new PauseScreen(this));
-		}
-		if (Gdx.input.isKeyPressed(Keys.SPACE)) {
-			if (board.isOnPlanet() != null)
-				((Game) Gdx.app.getApplicationListener()).setScreen(board
-						.isOnPlanet().getScreen());
 		}
 		if (Gdx.input.isKeyPressed(Keys.W)) {
 			ship.keyPressed('w');
