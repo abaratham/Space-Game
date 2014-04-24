@@ -64,12 +64,12 @@ public class Board {
 	// Add Planets to the Board
 	public void initPlanets() {
 		planets = new ArrayList<Planet>();
-		planets.add(new Planet("Moon", 768, 8192 - 2624, 224, 2f));
-		planets.add(new Planet("Mars", 6976, 8192 - 896, 96, 1f));
-		planets.add(new Planet("Marsh", 2560, 8192 - 6080, 160, 1.3f));
-		planets.add(new Planet("Jungle", 3776, 8192 - 2816, 160, 1.5f));
-		planets.add(new Planet("Base", 3776, 8192 - 4880, 128, 1f));
-		planets.add(new Planet("Earth", 6976, 8192 - 6080, 256, 2.5f));
+		planets.add(new Planet("Moon", 768, 8192 - 2624, 224, 1.5f));
+		planets.add(new Planet("Mars", 6976, 8192 - 896, 96, .7f));
+		planets.add(new Planet("Marsh", 2560, 8192 - 6080, 160, 1f));
+		planets.add(new Planet("Jungle", 3776, 8192 - 2816, 160, 1.2f));
+		planets.add(new Planet("Base", 3776, 8192 - 4880, 128, .7f));
+		planets.add(new Planet("Earth", 6976, 8192 - 6080, 256, 2f));
 	}
 
 	// Check if the ship is over a planet
@@ -142,11 +142,10 @@ public class Board {
 	// collisions, and update enemies
 	// if needed
 	public void update() {
-		System.out.println(ship.getVelocity());
 		tManager.update(.032f);
 		double f = Math.random();
 		// TODO: pick the probability of a weapon spawn
-		if (f <= 0.005) {
+		if (f <= 0.05) {
 			spawnWeapon();
 			spawnAsteroid();
 		}
@@ -158,7 +157,7 @@ public class Board {
 		}
 
 		// Check collisions between all entities
-//		 checkCollisions();
+		 checkCollisions();
 
 		// Check if entities are affected by any planets
 		checkPlanetEffects();
@@ -184,6 +183,11 @@ public class Board {
 					|| b.getPosition().y < ship.getPosition().y
 							- Gdx.graphics.getHeight() / 2)
 				ship.getBullets().remove(b);
+		}
+		
+		//Move all asteroids
+		for (int i = 0; i < asteroids.size(); i++) {
+			asteroids.get(i).move();
 		}
 
 		// Move and re-orient the ship
@@ -243,16 +247,7 @@ public class Board {
 		for (int i = 0; i < enemies.size(); i++) {
 			// Check player-enemy collisions
 			Enemy e = enemies.get(i);
-			float deltaX = (ship.getPosition().x + ship.getRadius())
-					- (e.getPosition().x + e.getRadius());
-
-			float deltaY = (ship.getPosition().y - ship.getRadius())
-					- (e.getPosition().y - e.getRadius());
-
-			float shipDist = (float) Math.sqrt(Math.pow(deltaX, 2)
-					+ Math.pow(deltaY, 2));
-
-			if (ship.getRadius() + e.getRadius() >= shipDist) {
+			if (ship.collidesWith(e)) {
 				// The ship has a shield around it
 				if (ship.isShielded())
 					ship.setShielded(false);
@@ -263,19 +258,9 @@ public class Board {
 			}
 			// Check bullet-enemy collisions for each bullet
 			for (int j = 0; j < bullets.size(); j++) {
-				Bullet b = bullets.get(j);
-				float _deltaX = (b.getPosition().x + b.getRadius())
-						- (e.getPosition().x + e.getRadius());
-
-				float _deltaY = (b.getPosition().y - b.getRadius())
-						- (e.getPosition().y - e.getRadius());
-
-				float bDist = (float) Math.sqrt(Math.pow(_deltaX, 2)
-						+ Math.pow(_deltaY, 2));
-
-				if (b.getRadius() + e.getRadius() >= bDist) {
+				if ((bullets.get(j)).collidesWith(e)) {
 					e.setVisible(false);
-					b.setVisible(false);
+					bullets.get(j).setVisible(false);
 					game.addExplosion((int) e.getPosition().x,
 							(int) e.getPosition().y);
 					game.getSound("Explosion").play(.7f);
@@ -286,6 +271,20 @@ public class Board {
 						return;
 				}
 
+			}
+			
+			//Check enemy-asteroid collisions
+			for (int k = 0; k < asteroids.size(); k++) {
+				if (e.collidesWith(asteroids.get(k))) {
+					e.setVisible(false);
+					game.addExplosion((int) e.getPosition().x,
+							(int) e.getPosition().y);
+					game.getSound("Explosion").play(.7f);
+					enemies.remove(i);
+					if (enemies.size() == 0)
+						return;
+				}
+					
 			}
 		}
 
@@ -305,7 +304,7 @@ public class Board {
 
 			// The ship is within range of the planet
 			if (dist <= x.getRange()) {
-				float temp = (dist / x.getRadius());
+				float temp = (dist / x.getRange());
 				float effect = x.getMaxEffect() - temp;
 				double angle = Math.atan2(deltaY, deltaX) + (Math.PI);
 				double effectX = (Math.cos(angle) * effect);

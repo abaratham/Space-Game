@@ -22,8 +22,16 @@ public class Asteroid extends Entity {
 		float vy = (float) Math.sin(Math.toRadians(getOrientation()))
 				* getMaxSpeed();
 		setVelocity(new Vector2(vx, vy));
+		System.out.println(getVelocity());
 		setAcceleration(new Vector2(0, 0));
 		setRadius(60);
+	}
+	
+	public void move() {
+		super.move();
+		Vector2 pos = getPosition();
+		if (pos.x > getBoard().getWidth() || pos.x < 0 || pos.y > getBoard().getHeight() || pos.y < 0)
+			getBoard().getAsteroids().remove(this);
 	}
 
 }

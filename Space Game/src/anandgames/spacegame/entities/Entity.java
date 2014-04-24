@@ -62,12 +62,11 @@ public class Entity {
 	}
 
 	public void move() {
-		velocity.x += acceleration.x;
-		velocity.y += acceleration.y;
-		// Entity is not moving, movement algorithm will calculate vx = maxSpeed
-		if (velocity.y == 0 && velocity.x == 0) {
+		if (acceleration.x == 0 && acceleration.y == 0) {
+			position.add(velocity);
 			return;
 		}
+		velocity.add(acceleration);
 		double currentSpeed = Math.sqrt(Math.pow(velocity.x, 2)
 				+ Math.pow(velocity.y, 2));
 		if (currentSpeed > maxSpeed)
@@ -76,6 +75,24 @@ public class Entity {
 		velocity.x = (float) (Math.cos(angle) * currentSpeed);
 		velocity.y = (float) (Math.sin(angle) * currentSpeed);
 		position.add(velocity);
+	}
+	
+	//Get the distance to Entity e
+	public float getDistanceTo(Entity e) {
+		float deltaX = (this.getPosition().x + this.getRadius())
+				- (e.getPosition().x + e.getRadius());
+
+		float deltaY = (this.getPosition().y - this.getRadius())
+				- (e.getPosition().y - e.getRadius());
+
+		float dist = (float) Math.sqrt(Math.pow(deltaX, 2)
+				+ Math.pow(deltaY, 2));
+		return dist;
+	}
+	
+	//Return whether or not this entity collides with Entity e
+	public boolean collidesWith(Entity e) {
+		return this.getRadius() + e.getRadius() > this.getDistanceTo(e);
 	}
 
 	public boolean isVisible() {

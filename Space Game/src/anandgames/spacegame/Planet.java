@@ -11,7 +11,7 @@ public class Planet {
 		setX(x);
 		setY(y);
 		setRadius(radius);
-		setRange(radius * 2);
+		setRange(radius * 3);
 		setMaxEffect(effect);
 		setName(name);
 	}
