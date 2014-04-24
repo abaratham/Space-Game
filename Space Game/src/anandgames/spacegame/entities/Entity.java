@@ -64,27 +64,17 @@ public class Entity {
 	public void move() {
 		velocity.x += acceleration.x;
 		velocity.y += acceleration.y;
-		// velocity.add(acceleration);
-		// if (velocity.x < -maxSpeed) {
-		// velocity.x = -maxSpeed;
-		// }
-		// if (velocity.x > maxSpeed) {
-		// velocity.x = maxSpeed;
-		// }
-		// if (velocity.y < -maxSpeed) {
-		// velocity.y = -maxSpeed;
-		// }
-		// if (velocity.y > maxSpeed) {
-		// velocity.y = maxSpeed;
-		// }
+		// Entity is not moving, movement algorithm will calculate vx = maxSpeed
 		if (velocity.y == 0 && velocity.x == 0) {
 			return;
 		}
+		double currentSpeed = Math.sqrt(Math.pow(velocity.x, 2)
+				+ Math.pow(velocity.y, 2));
+		if (currentSpeed > maxSpeed)
+			currentSpeed = maxSpeed;
 		double angle = Math.atan2(velocity.y, velocity.x);
-		velocity.x = (float) Math.cos(angle) * maxSpeed;
-		velocity.y = (float) Math.sin(angle) * maxSpeed;
-		// velocity.clamp((float)-Math.pow(maxSpeed, 2),
-		// (float)Math.pow(maxSpeed, 2));
+		velocity.x = (float) (Math.cos(angle) * currentSpeed);
+		velocity.y = (float) (Math.sin(angle) * currentSpeed);
 		position.add(velocity);
 	}
 

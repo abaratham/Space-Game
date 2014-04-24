@@ -142,7 +142,7 @@ public class Board {
 	// collisions, and update enemies
 	// if needed
 	public void update() {
-		System.out.println(ship.getPosition());
+		System.out.println(ship.getVelocity());
 		tManager.update(.032f);
 		double f = Math.random();
 		// TODO: pick the probability of a weapon spawn
@@ -158,7 +158,7 @@ public class Board {
 		}
 
 		// Check collisions between all entities
-		// checkCollisions();
+//		 checkCollisions();
 
 		// Check if entities are affected by any planets
 		checkPlanetEffects();
