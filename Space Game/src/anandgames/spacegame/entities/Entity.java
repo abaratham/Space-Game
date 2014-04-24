@@ -2,6 +2,8 @@ package anandgames.spacegame.entities;
 
 import java.awt.Point;
 
+import anandgames.spacegame.Board;
+
 import com.badlogic.gdx.math.Vector2;
 
 public class Entity {
@@ -12,9 +14,10 @@ public class Entity {
 	private boolean isVisible;
 	private float maxAcceleration;
 	private Vector2 position, velocity, acceleration;
+	private Board board;
 
 	public Entity(Vector2 startPos, double orientation, int speed,
-			float acceleration, Point key) {
+			float acceleration, Point key, Board b) {
 		velocity = new Vector2(0, 0);
 		setAcceleration(new Vector2(0, 0));
 		maxAcceleration = acceleration;
@@ -23,6 +26,7 @@ public class Entity {
 		setSpriteKey(key);
 		setVisible(true);
 		setMaxSpeed(speed);
+		setBoard(b);
 	}
 
 	public int getMaxSpeed() {
@@ -60,20 +64,27 @@ public class Entity {
 	public void move() {
 		velocity.x += acceleration.x;
 		velocity.y += acceleration.y;
-//		velocity.add(acceleration);
-		if (velocity.x < -maxSpeed) {
-			velocity.x = -maxSpeed;
+		// velocity.add(acceleration);
+		// if (velocity.x < -maxSpeed) {
+		// velocity.x = -maxSpeed;
+		// }
+		// if (velocity.x > maxSpeed) {
+		// velocity.x = maxSpeed;
+		// }
+		// if (velocity.y < -maxSpeed) {
+		// velocity.y = -maxSpeed;
+		// }
+		// if (velocity.y > maxSpeed) {
+		// velocity.y = maxSpeed;
+		// }
+		if (velocity.y == 0 && velocity.x == 0) {
+			return;
 		}
-		if (velocity.x > maxSpeed) {
-			velocity.x = maxSpeed;
-		}
-		if (velocity.y < -maxSpeed) {
-			velocity.y = -maxSpeed;
-		}
-		if (velocity.y > maxSpeed) {
-			velocity.y = maxSpeed;
-		}
-//		velocity.clamp((float)-Math.pow(maxSpeed, 2), (float)Math.pow(maxSpeed, 2));
+		double angle = Math.atan2(velocity.y, velocity.x);
+		velocity.x = (float) Math.cos(angle) * maxSpeed;
+		velocity.y = (float) Math.sin(angle) * maxSpeed;
+		// velocity.clamp((float)-Math.pow(maxSpeed, 2),
+		// (float)Math.pow(maxSpeed, 2));
 		position.add(velocity);
 	}
 
@@ -115,6 +126,14 @@ public class Entity {
 
 	public void setMaxAcceleration(float maxAcceleration) {
 		this.maxAcceleration = maxAcceleration;
+	}
+
+	public Board getBoard() {
+		return board;
+	}
+
+	public void setBoard(Board b) {
+		board = b;
 	}
 
 }

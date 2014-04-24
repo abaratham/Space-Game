@@ -8,12 +8,10 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Enemy extends Entity {
 
-	private Board board;
 
 	//Standard "Chaser" enemy
 	public Enemy(Vector2 startPos, Board board) {
-		super(startPos, 0, 10, .75f, new Point(0,1));
-		this.setBoard(board);
+		super(startPos, 0, 10, .75f, new Point(0,1), board);
 		setRadius(20);
 	}
 
@@ -34,11 +32,4 @@ public class Enemy extends Entity {
 
 	}
 
-	public Board getBoard() {
-		return board;
-	}
-
-	public void setBoard(Board board) {
-		this.board = board;
-	}
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import anandgames.spacegame.Board;
 import anandgames.spacegame.animations.ExplosionAnimation;
+import anandgames.spacegame.entities.Asteroid;
 import anandgames.spacegame.entities.Enemy;
 import anandgames.spacegame.entities.PlayerShip;
 import anandgames.spacegame.entities.ShootingEnemy;
@@ -18,7 +19,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -125,11 +125,11 @@ public class GameScreen implements Screen {
 
 			drawBullets();
 			drawEnemies();
-//			if (board.isOnPlanet())
 			drawShip();
 			drawInfo();
 			drawExplosions();
 			drawWeapons();
+			drawAsteroids();
 
 			spriteBatch.end();
 		} else {
@@ -137,6 +137,15 @@ public class GameScreen implements Screen {
 					.setScreen(new GameOverScreen());
 		}
 
+	}
+
+	public void drawAsteroids() {
+		for (Asteroid x : board.getAsteroids()) {
+			spriteBatch.draw(sprites[x.getSpriteKey().x][x.getSpriteKey().y],
+					(float) x.getPosition().x, (float) x.getPosition().y, 30f,
+					30f, 60f, 60f, 2, 2,
+					(float) Math.toDegrees(x.getOrientation()));
+		}
 	}
 
 	public void drawWeapons() {

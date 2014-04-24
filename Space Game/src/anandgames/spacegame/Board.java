@@ -3,6 +3,7 @@ package anandgames.spacegame;
 import java.util.ArrayList;
 import java.util.Random;
 
+import anandgames.spacegame.entities.Asteroid;
 import anandgames.spacegame.entities.Bullet;
 import anandgames.spacegame.entities.Enemy;
 import anandgames.spacegame.entities.PlayerShip;
@@ -29,6 +30,7 @@ public class Board {
 	private int counter = 0, currentPhase = 0, currentWave = 0;
 	private boolean inGame = true;
 	private ArrayList<Weapon> weaponList;
+	private ArrayList<Asteroid> asteroids;
 	private TweenManager tManager;
 
 	public Board(GameScreen gs) {
@@ -38,6 +40,7 @@ public class Board {
 		weaponList = new ArrayList<Weapon>();
 		initTweenManager();
 		initPlanets();
+		asteroids = new ArrayList<Asteroid>();
 		// for testing
 		// spawnWeapon();
 	}
@@ -102,6 +105,11 @@ public class Board {
 		}
 	}
 
+	// Spawn a new asteroid
+	public void spawnAsteroid() {
+		asteroids.add(new Asteroid(this));
+	}
+
 	// Reset the game to the first wave of enemies and ship starting position
 	public void reset() {
 		ship = new PlayerShip(this);
@@ -138,8 +146,10 @@ public class Board {
 		tManager.update(.032f);
 		double f = Math.random();
 		// TODO: pick the probability of a weapon spawn
-		if (f <= 0.005)
+		if (f <= 0.005) {
 			spawnWeapon();
+			spawnAsteroid();
+		}
 		if (enemies.size() == 0) {
 			currentWave++;
 			newWave();
@@ -148,7 +158,7 @@ public class Board {
 		}
 
 		// Check collisions between all entities
-//		 checkCollisions();
+		// checkCollisions();
 
 		// Check if entities are affected by any planets
 		checkPlanetEffects();
@@ -282,7 +292,7 @@ public class Board {
 	}
 
 	// Check if entities are within the range of planets
-	//TODO: figure out why the ship revolves in a square...
+	// TODO: figure out why the ship revolves in a square...
 	public void checkPlanetEffects() {
 		Vector2 ship = this.ship.getPosition();
 		for (Planet x : planets) {
@@ -344,5 +354,9 @@ public class Board {
 
 	public TweenManager getTManager() {
 		return tManager;
+	}
+
+	public ArrayList<Asteroid> getAsteroids() {
+		return asteroids;
 	}
 }

@@ -18,17 +18,15 @@ public class PlayerShip extends Entity {
 	private boolean upPressed, rightPressed, leftPressed, downPressed,
 			mouseHeld, shielded;
 	private int score, currentAmmo;
-	private Board board;
 	private Sound fire;
 	private Weapon weapon;
 
 	public PlayerShip(Board board) {
 		// Always initialized at the center of the board
-		super(new Vector2(board.getWidth() / 2, board.getHeight() / 2), 0, 11,
-				2f, new Point());
+		super(new Vector2(board.getWidth() / 2, board.getHeight() / 2), 0, 15,
+				2f, new Point(), board);
 		setRadius(20);
 		setScore(0);
-		this.board = board;
 		// Initialize default fire sound byte
 		fire = Gdx.audio.newSound(Gdx.files
 				.internal("data/Space Game/Sounds/Laser_Shoot.wav"));
@@ -76,10 +74,6 @@ public class PlayerShip extends Entity {
 		sound.play();
 	}
 
-	private Board getBoard() {
-		return board;
-	}
-
 	// Fire a bullet when the mouse is pressed
 	public void mousePressed() {
 		fire();
@@ -89,12 +83,12 @@ public class PlayerShip extends Entity {
 	// Move the ship and limit movement to within the bounds of the board
 	public void move() {
 		super.move();
-		if (getPosition().x > board.getWidth())
-			getPosition().x = board.getWidth();
+		if (getPosition().x > getBoard().getWidth())
+			getPosition().x = getBoard().getWidth();
 		if (getPosition().x < 0)
 			getPosition().x = 0;
-		if (getPosition().y > board.getHeight())
-			getPosition().y = board.getHeight();
+		if (getPosition().y > getBoard().getHeight())
+			getPosition().y = getBoard().getHeight();
 		if (getPosition().y < 0)
 			getPosition().y = 0;
 	}
