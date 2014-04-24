@@ -58,9 +58,9 @@ public class Entity {
 	}
 
 	public void move() {
-//		velocity.x += acceleration.x;
-//		velocity.y += acceleration.y;
-		velocity.add(acceleration);
+		velocity.x += acceleration.x;
+		velocity.y += acceleration.y;
+//		velocity.add(acceleration);
 		if (velocity.x < -maxSpeed) {
 			velocity.x = -maxSpeed;
 		}
@@ -73,6 +73,7 @@ public class Entity {
 		if (velocity.y > maxSpeed) {
 			velocity.y = maxSpeed;
 		}
+//		velocity.clamp((float)-Math.pow(maxSpeed, 2), (float)Math.pow(maxSpeed, 2));
 		position.add(velocity);
 	}
 

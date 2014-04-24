@@ -3,10 +3,11 @@ package anandgames.spacegame;
 
 public class Planet {
 
-	private int x, y, radius, range, maxEffect;
+	private int x, y, radius, range;
+	private float maxEffect;
 	private String name;
 	
-	public Planet(String name, int x, int y, int radius, int effect) {
+	public Planet(String name, int x, int y, int radius, float effect) {
 		setX(x);
 		setY(y);
 		setRadius(radius);
@@ -47,11 +48,11 @@ public class Planet {
 		this.range = range;
 	}
 
-	public int getMaxEffect() {
+	public float getMaxEffect() {
 		return maxEffect;
 	}
 
-	public void setMaxEffect(int maxEffect) {
+	public void setMaxEffect(float maxEffect) {
 		this.maxEffect = maxEffect;
 	}
 

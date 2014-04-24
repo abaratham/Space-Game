@@ -61,12 +61,12 @@ public class Board {
 	// Add Planets to the Board
 	public void initPlanets() {
 		planets = new ArrayList<Planet>();
-		planets.add(new Planet("Moon", 768, 8192 - 2624, 224, 6));
-		planets.add(new Planet("Mars", 6976, 8192 - 896, 96, 2));
-		planets.add(new Planet("Marsh", 2560, 8192 - 6080, 160, 3));
-		planets.add(new Planet("Jungle", 3776, 8192 - 2816, 160, 4));
-		planets.add(new Planet("Base", 3776, 8192 - 4880, 128, 2));
-		planets.add(new Planet("Earth", 6976, 8192 - 6080, 256, 7));
+		planets.add(new Planet("Moon", 768, 8192 - 2624, 224, 2f));
+		planets.add(new Planet("Mars", 6976, 8192 - 896, 96, 1f));
+		planets.add(new Planet("Marsh", 2560, 8192 - 6080, 160, 1.3f));
+		planets.add(new Planet("Jungle", 3776, 8192 - 2816, 160, 1.5f));
+		planets.add(new Planet("Base", 3776, 8192 - 4880, 128, 1f));
+		planets.add(new Planet("Earth", 6976, 8192 - 6080, 256, 2.5f));
 	}
 
 	// Check if the ship is over a planet
@@ -134,6 +134,7 @@ public class Board {
 	// collisions, and update enemies
 	// if needed
 	public void update() {
+		System.out.println(ship.getPosition());
 		tManager.update(.032f);
 		double f = Math.random();
 		// TODO: pick the probability of a weapon spawn
@@ -296,11 +297,11 @@ public class Board {
 			if (dist <= x.getRange()) {
 				float temp = (dist / x.getRadius());
 				float effect = x.getMaxEffect() - temp;
-				double angle = Math.atan2(deltaY, deltaX);
+				double angle = Math.atan2(deltaY, deltaX) + (Math.PI);
 				double effectX = (Math.cos(angle) * effect);
 				double effectY = (Math.sin(angle) * effect);
-				this.ship.getAcceleration().x -= effectX;
-				this.ship.getAcceleration().y -= effectY;
+				this.ship.getVelocity().x += effectX;
+				this.ship.getVelocity().y += effectY;
 			}
 		}
 	}
