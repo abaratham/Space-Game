@@ -44,10 +44,11 @@ public class GameScreen implements Screen {
 	private boolean aWasPressed, sWasPressed, dWasPressed, wWasPressed;
 	private int frameCount;
 	private float stateTime;
-	private Sound fire, explosion;
+	private Sound fire, explosion, background;
 	private ArrayList<ExplosionAnimation> explosionAnimations;
 	private TiledMap tiledMap;
 	private OrthogonalTiledMapRenderer mapRenderer;
+	private long backgroundID;
 
 	public GameScreen() {
 		super();
@@ -82,6 +83,8 @@ public class GameScreen implements Screen {
 		mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1f);
 		cam = new OrthographicCamera();
 		cam.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		background = Gdx.audio.newSound(Gdx.files.internal("data/Space Game/Sounds/loop1.mp3"));
+//		backgroundID = background.loop();
 	}
 
 	// Initialize the ship's flame animation
@@ -133,10 +136,11 @@ public class GameScreen implements Screen {
 
 			spriteBatch.end();
 		} else {
+			background.stop(backgroundID);
 			((Game) (Gdx.app.getApplicationListener()))
 					.setScreen(new GameOverScreen());
+			
 		}
-
 	}
 
 	public void drawAsteroids() {
@@ -338,12 +342,12 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void show() {
-
+		backgroundID = background.loop();
 	}
 
 	@Override
 	public void hide() {
-
+		background.stop(backgroundID);
 	}
 
 	@Override

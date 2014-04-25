@@ -146,9 +146,10 @@ public class Board {
 		double f = Math.random();
 		// TODO: pick the probability of a weapon spawn
 		if (f <= 0.05) {
-			spawnWeapon();
 			spawnAsteroid();
 		}
+		if (f <= .0001)
+			spawnWeapon();
 		if (enemies.size() == 0) {
 			currentWave++;
 			newWave();
@@ -157,7 +158,7 @@ public class Board {
 		}
 
 		// Check collisions between all entities
-		 checkCollisions();
+//		checkCollisions();
 
 		// Check if entities are affected by any planets
 		checkPlanetEffects();
@@ -184,8 +185,8 @@ public class Board {
 							- Gdx.graphics.getHeight() / 2)
 				ship.getBullets().remove(b);
 		}
-		
-		//Move all asteroids
+
+		// Move all asteroids
 		for (int i = 0; i < asteroids.size(); i++) {
 			asteroids.get(i).move();
 		}
@@ -272,8 +273,8 @@ public class Board {
 				}
 
 			}
-			
-			//Check enemy-asteroid collisions
+
+			// Check Asteroid collisions
 			for (int k = 0; k < asteroids.size(); k++) {
 				if (e.collidesWith(asteroids.get(k))) {
 					e.setVisible(false);
@@ -284,7 +285,12 @@ public class Board {
 					if (enemies.size() == 0)
 						return;
 				}
-					
+
+				if (ship.collidesWith(asteroids.get(k))) {
+					ship.setVisible(false);
+					inGame = false;
+				}
+
 			}
 		}
 
