@@ -10,6 +10,9 @@ import anandgames.spacegame.entities.Enemy;
 import anandgames.spacegame.entities.PlayerShip;
 import anandgames.spacegame.entities.ShootingEnemy;
 import anandgames.spacegame.pickups.Weapon;
+import anandgames.spacegame.tweens.MessageTweenAccessor;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -18,6 +21,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -39,26 +43,37 @@ public class GameScreen implements Screen {
 	private Board board;
 	private Animation shipAnimation;
 	private TextureRegion currentShipFrame;
-	private BitmapFont font;
+	private BitmapFont font, messageFont;
 	private PlayerShip ship;
 	private boolean aWasPressed, sWasPressed, dWasPressed, wWasPressed;
-	private int frameCount;
+	private int frameCount, mx, my, mCounter;
 	private float stateTime;
 	private Sound fire, explosion, background;
 	private ArrayList<ExplosionAnimation> explosionAnimations;
 	private TiledMap tiledMap;
 	private OrthogonalTiledMapRenderer mapRenderer;
 	private long backgroundID;
+	private String message;
 
 	public GameScreen() {
 		super();
 		// Initialize the ship's flame animation
 		initAnimation();
 
-		// Initialize font used for score
+		// Initialize fonts
 		font = new BitmapFont(
 				Gdx.files.internal("data/Space Game/Fonts/White.fnt"), false);
-		font.setScale(.2f);
+		font.setScale(.8f);
+
+		messageFont = new BitmapFont(
+				Gdx.files.internal("data/Space Game/Fonts/White.fnt"), false);
+		Color c = messageFont.getColor();
+		// System.out.println(c.a);
+		messageFont.setColor(c.r, c.g, c.b, 1);
+
+		// Initialize Tween Manager
+		// tManager = new TweenManager();
+		// Tween.registerAccessor(BitmapFont.class, new MessageTweenAccessor());
 
 		// Set up the sprite sheet
 		Pixmap pix = new Pixmap(
@@ -83,8 +98,9 @@ public class GameScreen implements Screen {
 		mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1f);
 		cam = new OrthographicCamera();
 		cam.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		background = Gdx.audio.newSound(Gdx.files.internal("data/Space Game/Sounds/loop1.mp3"));
-//		backgroundID = background.loop();
+		background = Gdx.audio.newSound(Gdx.files
+				.internal("data/Space Game/Sounds/loop1.mp3"));
+		// backgroundID = background.loop();
 	}
 
 	// Initialize the ship's flame animation
@@ -133,13 +149,16 @@ public class GameScreen implements Screen {
 			drawExplosions();
 			drawWeapons();
 			drawAsteroids();
+			drawInfo();
+			if (message != null)
+				drawMessage(delta);
 
 			spriteBatch.end();
 		} else {
 			background.stop(backgroundID);
 			((Game) (Gdx.app.getApplicationListener()))
-					.setScreen(new GameOverScreen());
-			
+					.setScreen(new GameOverScreen(ship.getScore()));
+
 		}
 	}
 
@@ -150,6 +169,25 @@ public class GameScreen implements Screen {
 					30f, 60f, 60f, 2, 2,
 					(float) Math.toDegrees(x.getOrientation()));
 		}
+	}
+
+	public void drawMessage(float delta) {
+		mCounter++;
+		my = (int) board.getShip().getPosition().y - 300;
+		mx = (int) board.getShip().getPosition().x
+				- (10 * (message.length() / 2));
+		messageFont.draw(spriteBatch, message, mx, my);
+		System.out.println(mCounter);
+		if (mCounter >= (int) (3 / delta)) {
+			message = null;
+			mCounter = 0;
+		}
+	}
+
+	public void showMessage(String message) {
+		this.message = message;
+		// Tween.to(messageFont, 0, 3f).target(.99f).start(tManager);
+		// message = null;
 	}
 
 	public void drawWeapons() {
@@ -170,11 +208,11 @@ public class GameScreen implements Screen {
 	}
 
 	public void drawInfo() {
-		// font.draw(spriteBatch, "Score: " + board.getShip().getScore(),
-		// ship.getPosition().x + 100, ship.getPosition().y + 90);
-		// font.draw(spriteBatch, "Special Ammo:"
-		// + board.getShip().getCurrentAmmo(), ship.getPosition().x + 100,
-		// ship.getPosition().y + 85);
+		font.draw(spriteBatch, "Score: " + board.getShip().getScore(),
+				ship.getPosition().x + 400, ship.getPosition().y + 360);
+		font.draw(spriteBatch, "Special Ammo:"
+				+ board.getShip().getCurrentAmmo(), ship.getPosition().x + 400,
+				ship.getPosition().y + 310);
 	}
 
 	public void drawShip() {
@@ -214,6 +252,11 @@ public class GameScreen implements Screen {
 	}
 
 	public void drawBullets() {
+		int sz;
+		if (ship.getWeapon() != null)
+			sz = ship.getWeapon().getAmmoRadius();
+		else
+			sz = 7;
 		for (int i = 0; i < ship.getBullets().size(); i++) {
 			Point p;
 			if (ship.getWeapon() == null)
@@ -222,7 +265,7 @@ public class GameScreen implements Screen {
 				p = ship.getWeapon().getBulletKey();
 			spriteBatch.draw(sprites[p.x][p.y], (float) ship.getBullets()
 					.get(i).getPosition().x, (float) ship.getBullets().get(i)
-					.getPosition().y, 7f, 7f, 14f, 14f, 1f, 1f, 0f);
+					.getPosition().y, sz, sz, 2 * sz, 2 * sz, 1f, 1f, 0f);
 		}
 	}
 
@@ -260,6 +303,17 @@ public class GameScreen implements Screen {
 		} else if (sWasPressed) {
 			ship.keyReleased('s');
 			sWasPressed = false;
+		}
+
+		// TESTING
+		if (Gdx.input.isKeyPressed(Keys.C)) {
+			if (board.collisions)
+				board.collisions = false;
+			else
+				board.collisions = true;
+			// spriteBatch.begin();
+			showMessage("Collisions: " + board.collisions);
+			// spriteBatch.end();
 		}
 	}
 

@@ -42,7 +42,9 @@ public class PlayerShip extends Entity {
 		// If weapon is null, use default weapon
 		if (weapon == null || weapon.getAmmoPerShot() == 1) {
 			bullets.add(new Bullet(new Vector2(getPosition().x + 2,
-					getPosition().y + 2), getOrientation(), getBoard()));
+					getPosition().y + 2), getOrientation(), 7, getBoard()));
+			if (weapon != null)
+				currentAmmo--;
 		}
 		// else fire equipped weapon
 		else {
@@ -56,41 +58,31 @@ public class PlayerShip extends Entity {
 				bullets.add(new Bullet(new Vector2(getPosition().x
 						+ getRadius(), getPosition().y + getRadius()),
 						getOrientation() + ((Math.PI / 12) * (i - 1)),
-						getBoard()));
+						getWeapon().getAmmoRadius(), getBoard()));
 			}
 			currentAmmo -= limit;
 
-			// If out of ammo set weapon to default
-			if (currentAmmo <= 0) {
-				setWeapon(null);
-			}
+
 		}
 		// Play correct sound
+		// If out of ammo set weapon to default
+		if (currentAmmo <= 0) {
+			setWeapon(null);
+		}
 		Sound sound;
 		if (weapon == null)
 			sound = fire;
 		else
 			sound = weapon.getSound();
-		sound.play();
+		sound.play(.5f);
+		System.out.println(currentAmmo);
+
 	}
 
 	// Fire a bullet when the mouse is pressed
 	public void mousePressed() {
 		fire();
 		setMouseHeld(true);
-	}
-
-	// Move the ship and limit movement to within the bounds of the board
-	public void move() {
-		super.move();
-		if (getPosition().x > getBoard().getWidth())
-			getPosition().x = getBoard().getWidth();
-		if (getPosition().x < 0)
-			getPosition().x = 0;
-		if (getPosition().y > getBoard().getHeight())
-			getPosition().y = getBoard().getHeight();
-		if (getPosition().y < 0)
-			getPosition().y = 0;
 	}
 
 	public void mouseReleased() {
@@ -197,8 +189,12 @@ public class PlayerShip extends Entity {
 	}
 
 	public void setWeapon(Weapon w) {
-		if (w != null)
-			currentAmmo += w.getAmmo();
+		if (w != null) {
+			if (weapon != null && weapon.equals(w))
+				currentAmmo += w.getAmmo();
+			else
+				currentAmmo = w.getAmmo();
+		}
 		weapon = w;
 	}
 

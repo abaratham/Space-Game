@@ -75,9 +75,17 @@ public class Entity {
 		velocity.x = (float) (Math.cos(angle) * currentSpeed);
 		velocity.y = (float) (Math.sin(angle) * currentSpeed);
 		position.add(velocity);
+		if (position.x > board.getWidth())
+			position.x = board.getWidth();
+		if (position.y > board.getHeight())
+			position.y = board.getHeight();
+		if (position.x < 0)
+			position.x = 0;
+		if (position.y < 0)
+			position.y = 0;
 	}
-	
-	//Get the distance to Entity e
+
+	// Get the distance to Entity e
 	public float getDistanceTo(Entity e) {
 		float deltaX = (this.getPosition().x + this.getRadius())
 				- (e.getPosition().x + e.getRadius());
@@ -89,8 +97,8 @@ public class Entity {
 				+ Math.pow(deltaY, 2));
 		return dist;
 	}
-	
-	//Return whether or not this entity collides with Entity e
+
+	// Return whether or not this entity collides with Entity e
 	public boolean collidesWith(Entity e) {
 		return this.getRadius() + e.getRadius() > this.getDistanceTo(e);
 	}

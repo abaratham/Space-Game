@@ -9,6 +9,7 @@ import anandgames.spacegame.entities.Enemy;
 import anandgames.spacegame.entities.PlayerShip;
 import anandgames.spacegame.entities.ShootingEnemy;
 import anandgames.spacegame.pickups.FlameThrower;
+import anandgames.spacegame.pickups.Rifle;
 import anandgames.spacegame.pickups.Shotgun;
 import anandgames.spacegame.pickups.Weapon;
 import anandgames.spacegame.screens.GameScreen;
@@ -32,6 +33,9 @@ public class Board {
 	private ArrayList<Weapon> weaponList;
 	private ArrayList<Asteroid> asteroids;
 	private TweenManager tManager;
+
+	// TESTING TOOLS, DELETE WHEN DONE
+	public boolean collisions = true;
 
 	public Board(GameScreen gs) {
 		game = gs;
@@ -125,14 +129,18 @@ public class Board {
 				.getPosition().y - (Gdx.graphics.getHeight() / 2);
 		// TODO: use to weight weapon spawns
 		double prob = Math.random();
-		if (prob < .5)
-			wep = new FlameThrower(this,
-					(float) (Math.random() * (maxX - minX) + minX),
-					(float) (Math.random() * (maxY - minY) + minY));
+		if (prob < .33)
+			wep = new FlameThrower(this, new Vector2((float) (Math.random()
+					* (maxX - minX) + minX), (float) (Math.random()
+					* (maxY - minY) + minY)));
+		else if (prob < .67)
+			wep = new Rifle(this, new Vector2((float) (Math.random()
+					* (maxX - minX) + minX), (float) (Math.random()
+					* (maxY - minY) + minY)));
 		else
-			wep = new Shotgun(this,
-					(float) (Math.random() * (maxX - minX) + minX),
-					(float) (Math.random() * (maxY - minY) + minY));
+			wep = new Shotgun(this, new Vector2((float) (Math.random()
+					* (maxX - minX) + minX), (float) (Math.random()
+					* (maxY - minY) + minY)));
 		Tween.to(wep, 0, 4.0f).target(360).repeat(-1, 0f).start(tManager);
 		weaponList.add(wep);
 
@@ -148,7 +156,7 @@ public class Board {
 		if (f <= 0.05) {
 			spawnAsteroid();
 		}
-		if (f <= .0001)
+		if (f <= .005)
 			spawnWeapon();
 		if (enemies.size() == 0) {
 			currentWave++;
@@ -158,7 +166,8 @@ public class Board {
 		}
 
 		// Check collisions between all entities
-//		checkCollisions();
+		if (collisions)
+			checkCollisions();
 
 		// Check if entities are affected by any planets
 		checkPlanetEffects();
@@ -229,17 +238,11 @@ public class Board {
 
 		// Check player-weapon collisions
 		for (Weapon w : weaponList) {
-			float deltaX = (ship.getPosition().x + ship.getRadius())
-					- (w.getX() + w.getRadius());
-			float deltaY = (ship.getPosition().y + ship.getRadius())
-					- (w.getY() - w.getRadius());
-			float shipDist = (float) Math.sqrt(Math.pow(deltaX, 2)
-					+ Math.pow(deltaY, 2));
-
 			// Ship picked up the weapon
-			if (ship.getRadius() + w.getRadius() >= shipDist) {
+			if (ship.collidesWith(w)) {
 				weaponList.remove(w);
 				ship.setWeapon(w);
+				game.showMessage("Picked up " + w.getName());
 				break;
 			}
 

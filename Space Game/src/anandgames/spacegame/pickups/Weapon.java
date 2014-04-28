@@ -3,52 +3,48 @@ package anandgames.spacegame.pickups;
 import java.awt.Point;
 
 import anandgames.spacegame.Board;
+import anandgames.spacegame.entities.Entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.math.Vector2;
 
-public class Weapon {
+public class Weapon extends Entity {
 
-	private int radius, ammo, limiter, ammoPerShot;
+	private int radius, ammo, limiter, ammoPerShot, ammoRadius;
 	private String name;
-	private float x, y;
 	private Point spriteKey, bulletKey;
 	private Board board;
 	private double orientation;
 	private Sound fire;
 
-	public Weapon(Board b, float x, float y, String name, Point spriteKey,
-			Point bulletKey, int ammo, int ammoPerShot, int limiter, String soundPath) {
-		setX(x);
-		setY(y);
+	public Weapon(Vector2 pos, String name, Point spriteKey, Point bulletKey,
+			int ammo, int ammoPerShot, int ammoRadius, int limiter,
+			String soundPath, Board board) {
+		super(pos, 0,0,0,spriteKey, board);
 		setName(name);
-		setSpriteKey(spriteKey);
-		setBoard(b);
-		setOrientation(0);
 		setRadius(16);
 		setAmmo(ammo);
 		setLimiter(limiter);
 		setBulletKey(bulletKey);
 		setAmmoPerShot(ammoPerShot);
-		fire = Gdx.audio.newSound(Gdx.files
-				.internal(soundPath));
+		setAmmoRadius(ammoRadius);
+		fire = Gdx.audio.newSound(Gdx.files.internal(soundPath));
+	}
+
+	public boolean equals(Weapon w) {
+		return name == w.getName();
 	}
 
 	public float getY() {
-		return y;
-	}
-
-	public void setY(float y) {
-		this.y = y;
+		return getPosition().y;
 	}
 
 	public float getX() {
-		return x;
+		return getPosition().x;
 	}
 
-	public void setX(float x) {
-		this.x = x;
-	}
+
 
 	public String getName() {
 		return name;
@@ -128,6 +124,14 @@ public class Weapon {
 
 	public void setBulletKey(Point bulletKey) {
 		this.bulletKey = bulletKey;
+	}
+
+	public int getAmmoRadius() {
+		return ammoRadius;
+	}
+
+	public void setAmmoRadius(int ammoRadius) {
+		this.ammoRadius = ammoRadius;
 	}
 
 }

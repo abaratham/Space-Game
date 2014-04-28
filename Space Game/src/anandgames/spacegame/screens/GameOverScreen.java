@@ -31,6 +31,11 @@ public class GameOverScreen implements Screen {
 	private BitmapFont white, black;
 	private TextureAtlas atlas;
 	private SpriteBatch batch;
+	private int score;
+	
+	public GameOverScreen(int s) {
+		score = s;
+	}
 	
 	@Override
 	public void dispose() {
@@ -109,7 +114,7 @@ public class GameOverScreen implements Screen {
 		});
 		
 		LabelStyle labelStyle = new LabelStyle(white, Color.WHITE);
-		heading = new Label("You Died!\nGAME OVER!", labelStyle);
+		heading = new Label("You Died!\nGAME OVER!\nScore: " + score , labelStyle);
 		heading.setAlignment(Align.center);
 		heading.setFontScale(2f);
 		
