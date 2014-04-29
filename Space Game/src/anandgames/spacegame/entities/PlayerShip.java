@@ -217,5 +217,6 @@ public class PlayerShip extends Entity {
 	public void setShielded(boolean s) {
 		shielded = s;
 	}
+	
 
 }

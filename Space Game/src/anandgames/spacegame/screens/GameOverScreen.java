@@ -25,7 +25,7 @@ public class GameOverScreen implements Screen {
 
 	private Stage stage;
 	private Table table;
-	private TextButton exit, mainMenuButton;
+	private TextButton exit, playAgainButton;
 	private Label heading;
 	private Skin skin;
 	private BitmapFont white, black;
@@ -118,19 +118,19 @@ public class GameOverScreen implements Screen {
 		heading.setAlignment(Align.center);
 		heading.setFontScale(2f);
 		
-		mainMenuButton = new TextButton("Return to Main Menu", textButtonStyle);
+		playAgainButton = new TextButton("Play Again", textButtonStyle);
 
-		mainMenuButton.pad(15, 100, 15, 100);
-		mainMenuButton.addListener(new ClickListener() {
+		playAgainButton.pad(15, 100, 15, 100);
+		playAgainButton.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				((Game) Gdx.app.getApplicationListener())
-				.setScreen(new MainMenu());
+				.setScreen(new LoadingScreen());
 			}
 		});
 		table.add(heading).spaceBottom(150).row();
-		table.add(mainMenuButton).spaceBottom(15).row();
+		table.add(playAgainButton).spaceBottom(15).row();
 		table.add(exit).spaceBottom(15).row();
 		table.debug();
 		stage.addActor(table);

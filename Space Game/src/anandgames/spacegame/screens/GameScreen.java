@@ -10,9 +10,6 @@ import anandgames.spacegame.entities.Enemy;
 import anandgames.spacegame.entities.PlayerShip;
 import anandgames.spacegame.entities.ShootingEnemy;
 import anandgames.spacegame.pickups.Weapon;
-import anandgames.spacegame.tweens.MessageTweenAccessor;
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -20,6 +17,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -54,9 +52,11 @@ public class GameScreen implements Screen {
 	private OrthogonalTiledMapRenderer mapRenderer;
 	private long backgroundID;
 	private String message;
+	private AssetManager manager;
 
-	public GameScreen() {
+	public GameScreen(AssetManager manager) {
 		super();
+		this.manager = manager;
 		// Initialize the ship's flame animation
 		initAnimation();
 
@@ -76,8 +76,7 @@ public class GameScreen implements Screen {
 		// Tween.registerAccessor(BitmapFont.class, new MessageTweenAccessor());
 
 		// Set up the sprite sheet
-		Pixmap pix = new Pixmap(
-				Gdx.files.internal("data/Space Game/Images/Sprites.png"));
+		Pixmap pix = manager.get("data/Space Game/Images/Sprites.png");
 		spriteSheet = new Texture(pix);
 		spriteBatch = new SpriteBatch();
 		sprites = new TextureRegion(spriteSheet).split(16, 16);
@@ -91,22 +90,19 @@ public class GameScreen implements Screen {
 
 		// Set up Animation and Sound for Enemy explosions
 		explosionAnimations = new ArrayList<ExplosionAnimation>();
-		explosion = Gdx.audio.newSound(Gdx.files
-				.internal("data/Space Game/Sounds/Explosion.wav"));
+		explosion = manager.get("data/Space Game/Sounds/Explosion.wav");
 
 		tiledMap = new TmxMapLoader().load("data/Space Game/Other/StarMap.tmx");
 		mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1f);
 		cam = new OrthographicCamera();
 		cam.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		background = Gdx.audio.newSound(Gdx.files
-				.internal("data/Space Game/Sounds/loop1.mp3"));
+		background = manager.get("data/Space Game/Sounds/loop1.mp3");
 		// backgroundID = background.loop();
 	}
 
 	// Initialize the ship's flame animation
 	public void initAnimation() {
-		shipSheet = new Texture(
-				Gdx.files.internal("data/Space Game/Images/ShipFrames.png"));
+		shipSheet = manager.get("data/Space Game/Images/ShipFrames.png");
 		TextureRegion[][] tmp = new TextureRegion(shipSheet).split(16, 16);
 		shipFrames = new TextureRegion[tmp.length * tmp[0].length];
 		int count = 0;
@@ -314,6 +310,18 @@ public class GameScreen implements Screen {
 			// spriteBatch.begin();
 			showMessage("Collisions: " + board.collisions);
 			// spriteBatch.end();
+		}
+		if (Gdx.input.isKeyPressed(Keys.DOWN)) {
+			ship.setMaxSpeed(ship.getMaxSpeed() - 1);
+			for (Enemy x : board.getEnemies()) {
+				x.setMaxSpeed(x.getMaxSpeed() - 1);
+			}
+		}
+		if (Gdx.input.isKeyPressed(Keys.UP)) {
+			ship.setMaxSpeed(ship.getMaxSpeed() + 1);
+			for (Enemy x : board.getEnemies()) {
+				x.setMaxSpeed(x.getMaxSpeed() + 1);
+			}
 		}
 	}
 
